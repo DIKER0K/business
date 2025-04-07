@@ -96,7 +96,6 @@ function StartPage() {
     return(
     <Box>
         <Box sx={{display:'flex', alignItems:'center', justifyContent: "center"}}>
-            <Typography sx={{color:'white', fontFamily:'benzin-bold'}}>АЛО</Typography>
             <DarkModeSwitch />
             <IconButton aria-label="delete">
                 <RemoveRedEyeOutlinedIcon sx={{color:'white'}} />

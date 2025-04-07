@@ -37,7 +37,6 @@ function TableReservation() {
               <KeyboardArrowLeftOutlinedIcon />
             </Box>
             <Grid container spacing={2}>
-              {/* Здесь будут карточки блюд */}
               <Grid item xs={12} sm={4}>
                 Баранки
               </Grid>
@@ -51,7 +50,7 @@ function TableReservation() {
           </Box>
         </Box>
         
-        {/* Правая колонка с информацией о ресторане */}
+        {/* Правая колонка о ресторане */}
         <Box sx={{ 
           width: '300px', 
           ml: 2, 
@@ -82,7 +81,7 @@ function TableReservation() {
         </Box>
       </Box>
       
-      {/* Нижняя панель навигации - всегда внизу */}
+      {/* Нижняя панель навигации*/}
       <Box sx={{ 
         bgcolor: 'white', 
         borderRadius: '2vw',  
