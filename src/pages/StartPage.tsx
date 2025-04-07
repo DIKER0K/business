@@ -2,12 +2,12 @@ import * as React from 'react';
 import IconButton from '@mui/material/IconButton';
 import { Typography } from "@mui/material"
 import "./styles/StartPage.css"
-import "./styles/fonts/benzin-bold.otf"
+import "./styles/fonts/SF-Pro-Display-Medium.otf"
 import Switch from '@mui/material/Switch';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
-import RoomOutlinedIcon from '@mui/icons-material/RoomOutlined';
+import RemoveRedEyeRoundedIcon from '@mui/icons-material/RemoveRedEyeRounded';
+import PlaceRoundedIcon from '@mui/icons-material/PlaceRounded';
 import { useState, useEffect } from 'react';
 import Avatar from '@mui/material/Avatar';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -94,18 +94,20 @@ function StartPage() {
     };
 
     return(
-    <Box>
-        <Box sx={{display:'flex', alignItems:'center', justifyContent: "center"}}>
-            <DarkModeSwitch />
-            <IconButton aria-label="delete">
-                <RemoveRedEyeOutlinedIcon sx={{color:'white'}} />
-            </IconButton>
+    <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', mt: '2vw'}}>
+        <Box sx={{display:'flex', alignItems:'center', justifyContent: "center", gap: '5vw'}}>
+            <Box sx={{display: 'flex', alignItems: 'center'}}>
+                <DarkModeSwitch />
+                <IconButton aria-label="delete">
+                    <RemoveRedEyeRoundedIcon sx={{color:'white'}} />
+                </IconButton>
+            </Box>
             <Box sx={{display: 'flex', alignItems: 'center'}}>
                 <Typography sx={{color:'white'}}>{loading ? 'Определение...' : location}</Typography>
                 <IconButton onClick={getLocation} disabled={loading}>
                     {loading ? 
                         <CircularProgress size={24} sx={{color:'white'}} /> : 
-                        <RoomOutlinedIcon sx={{color:'white'}}/>
+                        <PlaceRoundedIcon sx={{color:'white'}}/>
                     }
                 </IconButton>
             </Box>
@@ -114,7 +116,7 @@ function StartPage() {
                 <IconButton>
                     <ArrowDropDownOutlinedIcon sx={{color: 'white'}} />
                 </IconButton>
-                <Avatar src="/broken-image.jpg" />
+                <Avatar sx={{width: '1.8vw', height: '1.8vw'}} src="/broken-image.jpg" />
             </Box>
             <Button
                 variant="contained"
@@ -136,6 +138,9 @@ function StartPage() {
             >
                 Войти с помощью Telegram
             </Button>
+        </Box>
+        <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '-28vw'}}>
+            <img className='logo' src="logo.svg" alt="logo" />
         </Box>
     </Box>
     )
