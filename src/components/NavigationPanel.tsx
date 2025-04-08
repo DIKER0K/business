@@ -108,12 +108,12 @@ function NavigationPanel({ activeTab, setActiveTab }: NavigationPanelProps) {
           }}>
             <BusinessCenterIcon sx={{ 
               fontSize: '1.8vw', 
-              color: location.pathname === '/business' ? '#fff' : 'inherit'
+              color: location.pathname === '/business' ? '#fff' : '#1d1d1d'
             }} />
           </Box>
           <Typography variant="body2" sx={{
             fontSize: '1vw',
-            color: location.pathname === '/business' ? '#1d1d1d' : 'inherit'
+            color: location.pathname === '/business' ? '#1d1d1d' : '#1d1d1d'
           }}>Бизнес</Typography>
         </Box>
 
@@ -142,12 +142,12 @@ function NavigationPanel({ activeTab, setActiveTab }: NavigationPanelProps) {
           }}>
             <BusinessCenterIcon sx={{ 
               fontSize: '1.8vw', 
-              color: location.pathname === '/featured' ? '#fff' : 'inherit'
+              color: location.pathname === '/featured' ? '#fff' : '#1d1d1d'
             }} />
           </Box>
           <Typography variant="body2" sx={{
             fontSize: '1vw',
-            color: location.pathname === '/featured' ? '#1d1d1d' : 'inherit'
+            color: location.pathname === '/featured' ? '#1d1d1d' : '#1d1d1d'
           }}>Избранное</Typography>
         </Box>
 
