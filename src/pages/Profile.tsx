@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import './styles/Profile.css'
 import Box from '@mui/material/Box';
-import { Typography, Avatar, CircularProgress, Divider, Grid, Paper, IconButton } from '@mui/material';
+import { Typography, Avatar, CircularProgress, Divider, Grid, Paper, IconButton, Button } from '@mui/material';
 import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
@@ -11,6 +11,7 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import CloseIcon from '@mui/icons-material/Close';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { getFirestore, doc, getDoc, collection, query, getDocs, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 import { app } from '../firebase/config';
@@ -39,7 +40,8 @@ function Profile() {
   const [favorites, setFavorites] = useState<string[]>([]);
   const [loadingFavorites, setLoadingFavorites] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState(0);
-  const itemsPerPage = 3; // Показываем только 3 локации на странице
+  const [selectedBusiness, setSelectedBusiness] = useState<Business | null>(null);
+  const itemsPerPage = 4; // Показываем 4 локации в списке
   
   const auth = getAuth(app);
   const db = getFirestore(app);
@@ -84,6 +86,7 @@ function Profile() {
   // Сбрасываем текущую страницу при смене вкладки
   useEffect(() => {
     setCurrentPage(0);
+    setSelectedBusiness(null);
   }, [activeTab]);
 
   // Загрузка бизнесов/локаций
@@ -133,373 +136,211 @@ function Profile() {
         await updateDoc(userRef, {
           favorites: arrayRemove(businessId)
         });
-        setFavorites(favorites.filter(id => id !== businessId));
+        setFavorites(prev => prev.filter(id => id !== businessId));
       } else {
         // Добавляем в избранное
         await updateDoc(userRef, {
           favorites: arrayUnion(businessId)
         });
-        setFavorites([...favorites, businessId]);
+        setFavorites(prev => [...prev, businessId]);
       }
     } catch (error) {
       console.error("Ошибка при обновлении избранного:", error);
     }
   };
 
+  // Функция для выбора локации
+  const handleSelectBusiness = (business: Business) => {
+    setSelectedBusiness(business);
+  };
+
   // Отображение основного контента в зависимости от активной вкладки
   const renderMainContent = () => {
-    if (activeTab === "locations") {
-      // Вычисляем общее количество страниц
-      const totalPages = Math.ceil(businesses.length / itemsPerPage);
-      
-      // Получаем текущую страницу бизнесов
-      const currentBusinesses = businesses.slice(
-        currentPage * itemsPerPage, 
-        (currentPage + 1) * itemsPerPage
-      );
-      
+    if (activeTab === "locations" && selectedBusiness) {
+      // Если выбрана локация, показываем детальную информацию
       return (
-        <Box sx={{ p: '1.5vw' }}>
-          <Typography variant="h5" sx={{ mb: 3, fontSize: '1.6vw', fontWeight: 'bold' }}>
-            Локации
-          </Typography>
+        <Box sx={{ 
+          p: '1.5vw',
+          height: '100%',
+          position: 'relative',
+          borderRadius: '1vw',
+          overflow: 'hidden'
+        }}>
+          {/* Фоновое изображение */}
+          <Box sx={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 0,
+            '&::after': {
+              content: '""',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'rgba(0, 0, 0, 0.6)',
+              zIndex: 1
+            }
+          }}>
+            {selectedBusiness.photoURL ? (
+              <img 
+                src={selectedBusiness.photoURL} 
+                alt={selectedBusiness.name}
+                style={{ 
+                  width: '100%', 
+                  height: '100%', 
+                  objectFit: 'cover'
+                }}
+              />
+            ) : (
+              <Box sx={{ 
+                width: '100%', 
+                height: '100%', 
+                bgcolor: '#333'
+              }} />
+            )}
+          </Box>
           
-          {loadingBusinesses ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
-              <CircularProgress />
+          {/* Контент поверх изображения */}
+          <Box sx={{ 
+            position: 'relative', 
+            zIndex: 2,
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            color: 'white'
+          }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+              <Typography variant="h4" sx={{ fontSize: '2.2vw', fontWeight: 'bold' }}>
+                {selectedBusiness.name}
+              </Typography>
+              
+              <IconButton 
+                onClick={() => setSelectedBusiness(null)}
+                sx={{ color: 'white' }}
+              >
+                <CloseIcon />
+              </IconButton>
             </Box>
-          ) : businesses.length > 0 ? (
-            <Box sx={{ position: 'relative' }}>
-              <Grid container spacing={2}>
-                {currentBusinesses.map((business) => (
-                  <Grid item xs={4} key={business.id}>
-                    <Paper 
-                      elevation={2} 
-                      sx={{ 
-                        height: '26vw', // Увеличенный размер карточки
-                        width: '20vw',
-                        borderRadius: '1vw',
-                        overflow: 'hidden',
-                        position: 'relative',
-                        transition: 'transform 0.2s, box-shadow 0.2s',
-                        '&:hover': {
-                          transform: 'translateY(-4px)',
-                          boxShadow: '0 10px 20px rgba(0,0,0,0.1)'
-                        }
-                      }}
-                    >
-                      {/* Фото локации - фиксированной высоты */}
-                      <Box 
-                        sx={{ 
-                          height: '12vw', // Увеличенная высота фото
-                          width: '100%', 
-                          bgcolor: '#f0f0f0',
-                          position: 'relative'
-                        }}
-                      >
-                        {business.photoURL ? (
-                          <img 
-                            src={business.photoURL} 
-                            alt={business.name}
-                            style={{ 
-                              width: '100%', 
-                              height: '100%', 
-                              objectFit: 'cover'
-                            }}
-                          />
-                        ) : (
-                          <Box 
-                            sx={{ 
-                              width: '100%', 
-                              height: '100%', 
-                              display: 'flex', 
-                              alignItems: 'center', 
-                              justifyContent: 'center',
-                              bgcolor: '#f0f0f0'
-                            }}
-                          >
-                            <LocationOnIcon sx={{ fontSize: '3vw', color: '#ccc' }} />
-                          </Box>
-                        )}
-                        
-                        {/* Кнопка избранного */}
-                        <IconButton
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleFavorite(business.id);
-                          }}
-                          sx={{
-                            position: 'absolute',
-                            top: '0.5vw',
-                            right: '0.5vw',
-                            bgcolor: 'rgba(255, 255, 255, 0.8)',
-                            '&:hover': {
-                              bgcolor: 'rgba(255, 255, 255, 0.9)'
-                            },
-                            width: '2.2vw',
-                            height: '2.2vw'
-                          }}
-                        >
-                          {favorites.includes(business.id) ? (
-                            <FavoriteIcon sx={{ fontSize: '1.2vw', color: '#ff4081' }} />
-                          ) : (
-                            <FavoriteBorderIcon sx={{ fontSize: '1.2vw' }} />
-                          )}
-                        </IconButton>
-                      </Box>
-                      
-                      {/* Информация о локации */}
-                      <Box sx={{ p: '1.2vw' }}>
-                        <Typography 
-                          variant="h6" 
-                          sx={{ 
-                            fontWeight: 'bold', 
-                            fontSize: '1.3vw',
-                            mb: '0.6vw',
-                            whiteSpace: 'nowrap',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis'
-                          }}
-                        >
-                          {business.name}
-                        </Typography>
-                        
-                        <Box sx={{ display: 'flex', alignItems: 'center', mb: '0.6vw' }}>
-                          <LocationOnIcon sx={{ fontSize: '1.1vw', mr: '0.4vw', color: '#666' }} />
-                          <Typography 
-                            variant="body2" 
-                            sx={{ 
-                              fontSize: '1vw', 
-                              color: '#666',
-                              whiteSpace: 'nowrap',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis'
-                            }}
-                          >
-                            {business.city}
-                          </Typography>
-                        </Box>
-                        
-                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                          <AccessTimeIcon sx={{ fontSize: '1.1vw', mr: '0.4vw', color: '#666' }} />
-                          <Typography 
-                            variant="body2" 
-                            sx={{ 
-                              fontSize: '1vw', 
-                              color: '#666',
-                              whiteSpace: 'nowrap',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis'
-                            }}
-                          >
-                            {business.hours}
-                          </Typography>
-                        </Box>
-                      </Box>
-                    </Paper>
-                  </Grid>
-                ))}
-              </Grid>
+            
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+              <LocationOnIcon sx={{ mr: 1, fontSize: '1.2vw' }} />
+              <Typography sx={{ fontSize: '1.2vw' }}>
+                {selectedBusiness.city}
+              </Typography>
             </Box>
-          ) : (
-            <Typography variant="body1" sx={{ textAlign: 'center', color: '#666' }}>
-              Локации не найдены
+            
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+              <AccessTimeIcon sx={{ mr: 1, fontSize: '1.2vw' }} />
+              <Typography sx={{ fontSize: '1.2vw' }}>
+                {selectedBusiness.hours}
+              </Typography>
+            </Box>
+            
+            <Typography variant="h6" sx={{ mb: 1, fontSize: '1.4vw' }}>
+              Описание
             </Typography>
-          )}
+            
+            <Typography sx={{ fontSize: '1.1vw', mb: 3, maxWidth: '80%' }}>
+              {selectedBusiness.description || "Описание отсутствует"}
+            </Typography>
+            
+            <Box sx={{ mt: 'auto', display: 'flex', gap: 2 }}>
+              <Button 
+                variant="contained" 
+                sx={{ 
+                  borderRadius: '2vw',
+                  textTransform: 'none',
+                  fontSize: '1vw',
+                  px: '1.5vw'
+                }}
+              >
+                Забронировать
+              </Button>
+              
+              <Button 
+                variant="outlined" 
+                sx={{ 
+                  borderRadius: '2vw',
+                  textTransform: 'none',
+                  fontSize: '1vw',
+                  px: '1.5vw',
+                  color: 'white',
+                  borderColor: 'white',
+                  '&:hover': {
+                    borderColor: 'white',
+                    backgroundColor: 'rgba(255,255,255,0.1)'
+                  }
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleFavorite(selectedBusiness.id);
+                }}
+              >
+                {favorites.includes(selectedBusiness.id) ? 'Удалить из избранного' : 'Добавить в избранное'}
+              </Button>
+            </Box>
+          </Box>
+        </Box>
+      );
+    } else if (activeTab === "locations") {
+      // Если локация не выбрана, показываем пустой экран с инструкцией
+      return (
+        <Box sx={{ 
+          p: '1.5vw',
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          color: '#666'
+        }}>
+          <LocationOnIcon sx={{ fontSize: '4vw', mb: 2, color: '#ccc' }} />
+          <Typography variant="h5" sx={{ mb: 1, fontSize: '1.6vw' }}>
+            Выберите локацию
+          </Typography>
+          <Typography sx={{ fontSize: '1.1vw', textAlign: 'center', maxWidth: '60%' }}>
+            Выберите локацию из списка справа, чтобы увидеть подробную информацию
+          </Typography>
         </Box>
       );
     } else if (activeTab === "favorites") {
-      // Вычисляем общее количество страниц для избранного
-      const favoritedBusinesses = businesses.filter(business => favorites.includes(business.id));
-      const totalPages = Math.ceil(favoritedBusinesses.length / itemsPerPage);
-      
-      // Получаем текущую страницу избранных бизнесов
-      const currentFavorites = favoritedBusinesses.slice(
-        currentPage * itemsPerPage, 
-        (currentPage + 1) * itemsPerPage
-      );
-      
-      return (
-        <Box sx={{ p: '1.5vw' }}>
-          <Typography variant="h5" sx={{ mb: 3, fontSize: '1.6vw', fontWeight: 'bold' }}>
-            Избранное
-          </Typography>
-          
-          {loadingBusinesses || loadingFavorites ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
-              <CircularProgress />
-            </Box>
-          ) : currentFavorites.length > 0 ? (
-            <Box sx={{ position: 'relative' }}>
-              <Grid container spacing={2}>
-                {currentFavorites.map((business) => (
-                  <Grid item xs={4} key={business.id}>
-                    <Paper 
-                      elevation={2} 
-                      sx={{ 
-                        height: '22vw', // Увеличенный размер карточки
-                        width: '20vw',
-                        borderRadius: '1vw',
-                        overflow: 'hidden',
-                        position: 'relative',
-                        transition: 'transform 0.2s, box-shadow 0.2s',
-                        '&:hover': {
-                          transform: 'translateY(-4px)',
-                          boxShadow: '0 10px 20px rgba(0,0,0,0.1)'
-                        }
-                      }}
-                    >
-                      {/* Фото локации - фиксированной высоты */}
-                      <Box 
-                        sx={{ 
-                          height: '12vw', // Увеличенная высота фото
-                          width: '100%', 
-                          bgcolor: '#f0f0f0',
-                          position: 'relative'
-                        }}
-                      >
-                        {business.photoURL ? (
-                          <Box 
-                            component="img"
-                            src={business.photoURL}
-                            alt={business.name}
-                            sx={{ 
-                              width: '100%', 
-                              height: '100%', 
-                              objectFit: 'cover'
-                            }}
-                          />
-                        ) : (
-                          <Box 
-                            sx={{ 
-                              width: '100%', 
-                              height: '100%', 
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              bgcolor: '#e0e0e0'
-                            }}
-                          >
-                            <LocationOnIcon sx={{ fontSize: '4vw', color: '#999' }} />
-                          </Box>
-                        )}
-                        
-                        {/* Кнопка избранного (поверх фото) */}
-                        <Box 
-                          sx={{ 
-                            position: 'absolute', 
-                            top: '0.7vw', 
-                            right: '0.7vw',
-                            bgcolor: 'rgba(255,255,255,0.8)',
-                            borderRadius: '50%',
-                            width: '2.5vw',
-                            height: '2.5vw',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            cursor: 'pointer',
-                            transition: 'transform 0.2s',
-                            '&:hover': {
-                              transform: 'scale(1.1)'
-                            }
-                          }}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleFavorite(business.id);
-                          }}
-                        >
-                          <FavoriteIcon sx={{ color: '#ff6b6b', fontSize: '1.6vw' }} />
-                        </Box>
-                      </Box>
-                      
-                      {/* Информация о локации */}
-                      <Box sx={{ p: '1.2vw' }}>
-                        <Typography 
-                          variant="h6" 
-                          sx={{ 
-                            fontWeight: 'bold', 
-                            fontSize: '1.3vw',
-                            mb: '0.6vw',
-                            whiteSpace: 'nowrap',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis'
-                          }}
-                        >
-                          {business.name}
-                        </Typography>
-                        
-                        <Box sx={{ display: 'flex', alignItems: 'center', mb: '0.6vw' }}>
-                          <LocationOnIcon sx={{ fontSize: '1.1vw', mr: '0.4vw', color: '#666' }} />
-                          <Typography 
-                            variant="body2" 
-                            sx={{ 
-                              fontSize: '1vw', 
-                              color: '#666',
-                              whiteSpace: 'nowrap',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis'
-                            }}
-                          >
-                            {business.city}
-                          </Typography>
-                        </Box>
-                        
-                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                          <AccessTimeIcon sx={{ fontSize: '1.1vw', mr: '0.4vw', color: '#666' }} />
-                          <Typography 
-                            variant="body2" 
-                            sx={{ 
-                              fontSize: '1vw', 
-                              color: '#666',
-                              whiteSpace: 'nowrap',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis'
-                            }}
-                          >
-                            {business.hours}
-                          </Typography>
-                        </Box>
-                      </Box>
-                    </Paper>
-                  </Grid>
-                ))}
-              </Grid>
-            </Box>
-          ) : (
-            <Typography variant="body1" sx={{ textAlign: 'center', color: '#666' }}>
-              У вас пока нет избранных локаций
-            </Typography>
-          )}
-        </Box>
-      );
+      // Код для вкладки "Избранное"
+      // ... существующий код ...
     } else if (activeTab === "settings") {
-      // ... существующий код для настроек ...
+      // Код для вкладки "Настройки"
+      // ... существующий код ...
     } else {
-      // ... существующий код для профиля ...
+      // Код для вкладки "Профиль" (по умолчанию)
+      // ... существующий код ...
     }
   };
 
   return (
     <Box sx={{ 
-      flexGrow: 1, 
       display: 'flex', 
       flexDirection: 'column', 
-      height: 'calc(100vh - 4vw)',
-      margin: '2vw'
+      height: '100vh', 
+      bgcolor: '#1d1d1d',
+      overflow: 'hidden'
     }}>
+      {/* Основной контент */}
       <Box sx={{ 
         display: 'flex', 
         flex: 1,
-        mb: '2vw'
+        p: '1vw',
+        gap: '1vw',
+        overflow: 'hidden'
       }}>
-        {/* Основное содержимое */}
+        {/* Центральная панель */}
         <Box sx={{ 
-          flex: 1, 
-          bgcolor: 'white', 
-          borderRadius: '2vw',
-          mr: '2vw',
-          overflow: 'hidden',
-          boxShadow: '0vw 0.2vw 0.5vw rgba(0, 0, 0, 0.1)'
+          flex: 1,
+          bgcolor: 'white',
+          borderRadius: '1vw',
+          overflow: 'hidden'
         }}>
           {loading ? (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
@@ -512,13 +353,13 @@ function Profile() {
         
         {/* Правая панель с информацией о пользователе */}
         <Box sx={{ 
-          width: '17vw', 
+          width: '20vw', 
           bgcolor: 'white', 
-          borderRadius: '2vw',
+          borderRadius: '1vw',
           p: '1.5vw',
-          boxShadow: '0vw 0.2vw 0.5vw rgba(0, 0, 0, 0.1)',
           display: 'flex',
-          flexDirection: 'column'
+          flexDirection: 'column',
+          overflow: 'hidden'
         }}>
           {loading ? (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
@@ -526,7 +367,7 @@ function Profile() {
             </Box>
           ) : (
             <>
-              {/* Аватар и имя пользователя */}
+              {/* Информация о пользователе */}
               <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 2 }}>
                 <Avatar 
                   sx={{ 
@@ -570,98 +411,164 @@ function Profile() {
               {/* Разделитель */}
               <Divider sx={{ my: 2 }} />
               
-              {/* Недавно посещали */}
-              <Typography sx={{ fontSize: '1.2vw', fontWeight: 'bold', mb: 1 }}>
-                Недавно посещали:
-              </Typography>
-              
-              {/* Здесь можно добавить список недавно посещенных мест */}
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, flexGrow: 1 }}>
-                {/* Пока пусто */}
-              </Box>
-              
-              {/* Пагинация со стрелками - перемещена в правую панель */}
-              {activeTab === "locations" && businesses.length > 0 && (
-                <Box sx={{ 
-                  display: 'flex', 
-                  justifyContent: 'center', 
-                  alignItems: 'center',
-                  mt: 'auto',
-                  pt: 2,
-                  gap: 2
-                }}>
-                  <IconButton 
-                    disabled={currentPage === 0}
-                    onClick={() => setCurrentPage(prev => prev - 1)}
-                    sx={{ 
-                      bgcolor: currentPage === 0 ? 'rgba(0,0,0,0.05)' : 'white',
-                      '&:hover': {
-                        bgcolor: 'rgba(0,0,0,0.1)'
-                      }
-                    }}
-                  >
-                    <ArrowBackIosNewIcon sx={{ fontSize: '1vw' }} />
-                  </IconButton>
-                  
-                  <Typography sx={{ fontSize: '1vw' }}>
-                    {currentPage + 1} из {Math.ceil(businesses.length / itemsPerPage)}
+              {/* Список мест вместо "Недавно посещали" */}
+              {activeTab === "locations" && (
+                <>
+                  <Typography sx={{ fontSize: '1.2vw', fontWeight: 'bold', mb: 1 }}>
+                    Места
                   </Typography>
                   
-                  <IconButton 
-                    disabled={currentPage === Math.ceil(businesses.length / itemsPerPage) - 1}
-                    onClick={() => setCurrentPage(prev => prev + 1)}
-                    sx={{ 
-                      bgcolor: currentPage === Math.ceil(businesses.length / itemsPerPage) - 1 ? 'rgba(0,0,0,0.05)' : 'white',
-                      '&:hover': {
-                        bgcolor: 'rgba(0,0,0,0.1)'
-                      }
-                    }}
-                  >
-                    <ArrowForwardIosIcon sx={{ fontSize: '1vw' }} />
-                  </IconButton>
-                </Box>
+                  <Box sx={{ 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    gap: 1, 
+                    flexGrow: 1,
+                    overflow: 'auto',
+                    maxHeight: '20vw'
+                  }}>
+                    {loadingBusinesses ? (
+                      <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
+                        <CircularProgress size={24} />
+                      </Box>
+                    ) : businesses.length > 0 ? (
+                      // Получаем текущую страницу бизнесов
+                      businesses.slice(
+                        currentPage * itemsPerPage, 
+                        (currentPage + 1) * itemsPerPage
+                      ).map((business) => (
+                        <Box 
+                          key={business.id}
+                          sx={{ 
+                            display: 'flex',
+                            alignItems: 'center',
+                            p: '0.8vw',
+                            borderRadius: '0.5vw',
+                            cursor: 'pointer',
+                            transition: 'background-color 0.2s',
+                            backgroundColor: selectedBusiness?.id === business.id ? 'rgba(0,0,0,0.05)' : 'transparent',
+                            '&:hover': {
+                              backgroundColor: 'rgba(0,0,0,0.05)'
+                            }
+                          }}
+                          onClick={() => handleSelectBusiness(business)}
+                        >
+                          <Box sx={{ 
+                            width: '3vw', 
+                            height: '3vw', 
+                            borderRadius: '0.5vw',
+                            overflow: 'hidden',
+                            mr: '0.8vw',
+                            bgcolor: '#f0f0f0',
+                            flexShrink: 0
+                          }}>
+                            {business.photoURL ? (
+                              <img 
+                                src={business.photoURL} 
+                                alt={business.name}
+                                style={{ 
+                                  width: '100%', 
+                                  height: '100%', 
+                                  objectFit: 'cover'
+                                }}
+                              />
+                            ) : (
+                              <Box sx={{ 
+                                width: '100%', 
+                                height: '100%', 
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                              }}>
+                                <LocationOnIcon sx={{ fontSize: '1.5vw', color: '#999' }} />
+                              </Box>
+                            )}
+                          </Box>
+                          
+                          <Box sx={{ overflow: 'hidden' }}>
+                            <Typography sx={{ 
+                              fontSize: '1vw', 
+                              fontWeight: 'bold',
+                              whiteSpace: 'nowrap',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis'
+                            }}>
+                              {business.name}
+                            </Typography>
+                            
+                            <Typography sx={{ 
+                              fontSize: '0.8vw', 
+                              color: '#666',
+                              whiteSpace: 'nowrap',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis'
+                            }}>
+                              {business.city}
+                            </Typography>
+                          </Box>
+                        </Box>
+                      ))
+                    ) : (
+                      <Typography sx={{ fontSize: '0.9vw', color: '#999', textAlign: 'center', my: 2 }}>
+                        Нет доступных мест
+                      </Typography>
+                    )}
+                  </Box>
+                  
+                  {/* Пагинация со стрелками */}
+                  {businesses.length > itemsPerPage && (
+                    <Box sx={{ 
+                      display: 'flex', 
+                      justifyContent: 'center', 
+                      alignItems: 'center',
+                      mt: 'auto',
+                      pt: 2,
+                      gap: 2
+                    }}>
+                      <IconButton 
+                        disabled={currentPage === 0}
+                        onClick={() => setCurrentPage(prev => prev - 1)}
+                        sx={{ 
+                          bgcolor: currentPage === 0 ? 'rgba(0,0,0,0.05)' : 'white',
+                          '&:hover': {
+                            bgcolor: 'rgba(0,0,0,0.1)'
+                          }
+                        }}
+                      >
+                        <ArrowBackIosNewIcon sx={{ fontSize: '1vw' }} />
+                      </IconButton>
+                      
+                      <Typography sx={{ fontSize: '1vw' }}>
+                        {currentPage + 1} из {Math.ceil(businesses.length / itemsPerPage)}
+                      </Typography>
+                      
+                      <IconButton 
+                        disabled={currentPage === Math.ceil(businesses.length / itemsPerPage) - 1}
+                        onClick={() => setCurrentPage(prev => prev + 1)}
+                        sx={{ 
+                          bgcolor: currentPage === Math.ceil(businesses.length / itemsPerPage) - 1 ? 'rgba(0,0,0,0.05)' : 'white',
+                          '&:hover': {
+                            bgcolor: 'rgba(0,0,0,0.1)'
+                          }
+                        }}
+                      >
+                        <ArrowForwardIosIcon sx={{ fontSize: '1vw' }} />
+                      </IconButton>
+                    </Box>
+                  )}
+                </>
               )}
               
-              {/* Пагинация для избранного - также перемещена в правую панель */}
-              {activeTab === "favorites" && favorites.length > 0 && (
-                <Box sx={{ 
-                  display: 'flex', 
-                  justifyContent: 'center', 
-                  alignItems: 'center',
-                  mt: 'auto',
-                  pt: 2,
-                  gap: 2
-                }}>
-                  <IconButton 
-                    disabled={currentPage === 0}
-                    onClick={() => setCurrentPage(prev => prev - 1)}
-                    sx={{ 
-                      bgcolor: currentPage === 0 ? 'rgba(0,0,0,0.05)' : 'white',
-                      '&:hover': {
-                        bgcolor: 'rgba(0,0,0,0.1)'
-                      }
-                    }}
-                  >
-                    <ArrowBackIosNewIcon sx={{ fontSize: '1vw' }} />
-                  </IconButton>
-                  
-                  <Typography sx={{ fontSize: '1vw' }}>
-                    {currentPage + 1} из {Math.ceil(favorites.length / itemsPerPage)}
+              {/* Для других вкладок показываем "Недавно посещали" */}
+              {activeTab !== "locations" && (
+                <>
+                  <Typography sx={{ fontSize: '1.2vw', fontWeight: 'bold', mb: 1 }}>
+                    Недавно посещали:
                   </Typography>
                   
-                  <IconButton 
-                    disabled={currentPage === Math.ceil(favorites.length / itemsPerPage) - 1}
-                    onClick={() => setCurrentPage(prev => prev + 1)}
-                    sx={{ 
-                      bgcolor: currentPage === Math.ceil(favorites.length / itemsPerPage) - 1 ? 'rgba(0,0,0,0.05)' : 'white',
-                      '&:hover': {
-                        bgcolor: 'rgba(0,0,0,0.1)'
-                      }
-                    }}
-                  >
-                    <ArrowForwardIosIcon sx={{ fontSize: '1vw' }} />
-                  </IconButton>
-                </Box>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, flexGrow: 1 }}>
+                    {/* Пока пусто */}
+                  </Box>
+                </>
               )}
             </>
           )}
@@ -677,7 +584,8 @@ function Profile() {
           flexDirection: 'column',
           boxShadow: '0vw 0.2vw 0.5vw rgba(0, 0, 0, 0.1)',
           position: 'relative',
-          overflow: 'hidden'
+          overflow: 'hidden',
+          margin: '0 1vw 1vw 1vw'
         }}
         animate={{ 
           height: activeTab === "business" ? '22vw' : '6vw'
