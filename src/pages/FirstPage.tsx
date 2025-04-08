@@ -6,6 +6,8 @@ import { app } from '../firebase/config';
 import PlaceRoundedIcon from '@mui/icons-material/PlaceRounded';
 import { Avatar, Typography, IconButton, Divider, Grid, CircularProgress } from '@mui/material';
 import { getFirestore, collection, getDocs, query, where, limit } from "firebase/firestore";
+import StarOutlineRoundedIcon from '@mui/icons-material/StarOutlineRounded';
+import StarRateRoundedIcon from '@mui/icons-material/StarRateRounded';
 
 function App() {
   const [user, setUser] = useState<any>(null);
@@ -15,6 +17,15 @@ function App() {
   const [loadingBusinesses, setLoadingBusinesses] = useState(false);
   const navigate = useNavigate();
   const auth = getAuth(app);
+
+  // Добавьте эту вспомогательную функцию в начало компонента
+  const capitalizeEachWord = (str: string) => {
+    if (!str) return '';
+    return str.toLowerCase()
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
 
   // Функция для определения местоположения
   const getLocation = () => {
@@ -63,7 +74,7 @@ function App() {
       const q = query(
         businessesRef,
         where("city", "==", location),
-        limit(6)
+        limit(4)
       );
       
       const querySnapshot = await getDocs(q);
@@ -116,31 +127,67 @@ function App() {
           bgcolor: 'white',
           borderRadius: '1vw',
           overflow: 'hidden',
-          p: '1vw'
+          p: '1vw',
+          background: 'linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(background_1.png) no-repeat center center',
+          backgroundSize: 'cover',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center'
         }}>
           <Box sx={{
             display: 'flex',
             alignItems: 'center',
+            p: '2vw'
           }}>
-            <Typography variant="h6">Возможно, вам понравится:</Typography>
+            <Typography variant="h6" sx={{color: 'white', fontSize: '2vw'}}>Возможно, вам понравится:</Typography>
           </Box>
-          <Grid container spacing={2}>
+          <Grid container spacing={2} sx={{display: 'flex', justifyContent: 'space-around', mt: '-2vw'}}>
             {loadingBusinesses ? (
               <Grid item xs={12}>
                 <CircularProgress />
               </Grid>
             ) : businesses.map((business) => (
-              <Grid item xs={12} md={6} lg={4} key={business.id}>
+              <Grid item xs={12} md={6} lg={3} key={business.id}>
                 <Box sx={{
                   bgcolor: 'white',
                   borderRadius: '1vw',
                   overflow: 'hidden',
-                  p: '1vw'
+                  alignItems: 'center',
+                  display: 'flex',
+                  background: 'transparent',
+                  p: '3vw',
+                  gap: '1vw'
                 }}>
-                  <Avatar src={business?.photoURL} />
-                  <Typography variant="h6">{business.name}</Typography>
-                  <Typography variant="body2">{business.description}</Typography>
-                  <Typography variant="h6">{business.rating || 0} / 5</Typography>
+                  <Avatar sx={{width: '7vw', height: '7vw'}} src={business?.photoURL} />
+                  <Box sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '0.5vw',
+                    alignItems: 'left'
+                  }}>
+                    <Typography variant="h6" sx={{
+                      fontSize: '2vw',
+                      color: 'white'
+                    }}>
+                      {capitalizeEachWord(business.name)}
+                    </Typography>
+                    <Typography variant="body2" sx={{
+                      fontSize: '1.5vw',
+                      color: 'white'
+                    }}>
+                      {capitalizeEachWord(business.type) || 'Не указано'}
+                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 1 }}>
+                    {Array.from({ length: 5 }).map((_, index) => (
+                      index < Math.round(business.rating || 0) ? (
+                        <StarRateRoundedIcon key={index} sx={{ color: '#ffc107', fontSize: '1.2rem' }} />
+                      ) : (
+                        <StarOutlineRoundedIcon key={index} sx={{ color: '#ddd', fontSize: '1.2rem' }} />
+                      )
+                    ))}
+                    </Box>
+                  </Box>
                 </Box>
               </Grid>
             ))}
@@ -204,12 +251,12 @@ function App() {
               <Typography variant="h6">{(user?.reviews && user.reviews.length) || 0} отзывов</Typography>
             </Box>
           </Box>
-          <Divider color='#B7B7B7' sx={{mt: '2vw', mb: '2vw'}} />
+          <Divider color='#B7B7B7' sx={{mt: '2vw', mb: '1vw'}} />
           <Box sx={{
             display: 'flex',
             alignItems: 'center',
             flexDirection: 'column',
-            gap: '1vw'
+            gap: '0.2vw'
           }}>
             <Typography variant="h6">Недавно посещали:</Typography>
             {user?.recentlyVisited && user.recentlyVisited.length > 0 ? (
@@ -217,7 +264,7 @@ function App() {
                 <Typography variant="h6" key={place.id}>{place.name}</Typography>
               ))
             ) : (
-              <Typography variant="h6">Ничего не посещали</Typography>
+              <Typography variant="h6" >Ничего не посещали</Typography>
             )}
           </Box>
         </Box>
