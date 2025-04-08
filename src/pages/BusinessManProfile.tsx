@@ -12,7 +12,7 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import LocationPinIcon from '@mui/icons-material/LocationPin';
 
-function TableReservation() {
+function BusinessManProfile() {
   return (
     <Box sx={{ 
       flexGrow: 1, 
@@ -134,4 +134,4 @@ function TableReservation() {
   )
 }
 
-export default TableReservation
+export default BusinessManProfile
