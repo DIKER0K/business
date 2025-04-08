@@ -7,9 +7,12 @@ import { app } from './firebase/config'
 import NavigationPanel from './components/NavigationPanel'
 import StartPage from './pages/StartPage'
 import FirstPage from './pages/FirstPage'
+import BusinessPage from './pages/BusinessPage'
+import FeaturedPage from './pages/FeaturedPage'
+import { User } from 'firebase/auth'
 
 function RootComponent() {
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState<User | null>(null)
   const auth = getAuth(app)
   
   useEffect(() => {
@@ -22,10 +25,14 @@ function RootComponent() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={user ? <Navigate to="/app" /> : <StartPage />} />
-        <Route 
-          path="/app/*" 
-          element={
+        {/* Основной маршрут с проверкой авторизации */}
+        <Route path="/" element={
+          user ? <Navigate to="/app" replace /> : <StartPage />
+        }/>
+        
+        {/* Защищенные маршруты */}
+        <Route path="/app" element={
+          user ? (
             <>
               <FirstPage />
               <NavigationPanel 
@@ -34,8 +41,35 @@ function RootComponent() {
                 user={user}
               />
             </>
-          } 
-        />
+          ) : <Navigate to="/" replace />
+        }/>
+        
+        <Route path="/business" element={
+          user ? (
+            <>
+              <BusinessPage />
+              <NavigationPanel 
+                activeTab="business" 
+                setActiveTab={() => {}}
+                user={user}
+              />
+            </>
+          ) : <Navigate to="/" replace />
+        }/>
+
+        <Route path="/featured" element={
+          <>
+            <FeaturedPage />
+            <NavigationPanel 
+              activeTab="featured" 
+              setActiveTab={() => {}}
+              user={user}
+            />
+          </>
+        }/>
+
+        {/* Резервный маршрут */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
   )
