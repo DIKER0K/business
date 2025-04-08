@@ -13,6 +13,8 @@ import { User } from 'firebase/auth'
 
 function RootComponent() {
   const [user, setUser] = useState<User | null>(null)
+  const [currentLocation, setCurrentLocation] = useState("Калининград")
+  const [loadingLocation, setLoadingLocation] = useState(false)
   const auth = getAuth(app)
   
   useEffect(() => {
@@ -21,6 +23,42 @@ function RootComponent() {
     })
     return () => unsubscribe()
   }, [auth])
+
+  // Общая функция для определения местоположения
+  const getLocation = () => {
+    setLoadingLocation(true)
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          try {
+            const { latitude, longitude } = position.coords
+            const response = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10&accept-language=ru`
+            )
+            const data = await response.json()
+            const city = data.address.city || 
+                        data.address.town || 
+                        data.address.village || 
+                        "Калининград"
+            setCurrentLocation(city)
+          } catch (error) {
+            console.error("Ошибка при определении местоположения:", error)
+            setCurrentLocation("Калининград")
+          } finally {
+            setLoadingLocation(false)
+          }
+        },
+        (error) => {
+          console.error("Ошибка геолокации:", error)
+          setCurrentLocation("Калининград")
+          setLoadingLocation(false)
+        }
+      )
+    } else {
+      setCurrentLocation("Калининград")
+      setLoadingLocation(false)
+    }
+  }
 
   return (
     <Router>
@@ -34,11 +72,15 @@ function RootComponent() {
         <Route path="/app" element={
           user ? (
             <>
-              <FirstPage />
+              <FirstPage 
+                currentLocation={currentLocation}
+                loadingLocation={loadingLocation}
+                getLocation={getLocation}
+              />
               <NavigationPanel 
-                activeTab="main" 
-                setActiveTab={() => {}}
-                user={user}
+                currentLocation={currentLocation}
+                loadingLocation={loadingLocation}
+                getLocation={getLocation}
               />
             </>
           ) : <Navigate to="/" replace />

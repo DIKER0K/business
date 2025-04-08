@@ -9,10 +9,14 @@ import { getFirestore, collection, getDocs, query, where, limit } from "firebase
 import StarOutlineRoundedIcon from '@mui/icons-material/StarOutlineRounded';
 import StarRateRoundedIcon from '@mui/icons-material/StarRateRounded';
 
-function App() {
+interface FirstPageProps {
+  currentLocation: string;
+  loadingLocation: boolean;
+  getLocation: () => void;
+}
+
+function FirstPage({ currentLocation, loadingLocation, getLocation }: FirstPageProps) {
   const [user, setUser] = useState<any>(null);
-  const [location, setLocation] = useState("Калининград");
-  const [loadingLocation, setLoadingLocation] = useState(false);
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [loadingBusinesses, setLoadingBusinesses] = useState(false);
   const navigate = useNavigate();
@@ -27,45 +31,9 @@ function App() {
       .join(' ');
   };
 
-  // Функция для определения местоположения
-  const getLocation = () => {
-    setLoadingLocation(true);
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          try {
-            const { latitude, longitude } = position.coords;
-            const response = await fetch(
-              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10&accept-language=ru`
-            );
-            const data = await response.json();
-            const city = data.address.city || 
-                        data.address.town || 
-                        data.address.village || 
-                        "Калининград";
-            setLocation(city);
-          } catch (error) {
-            console.error("Ошибка определения:", error);
-            setLocation("Калининград");
-          } finally {
-            setLoadingLocation(false);
-          }
-        },
-        (error) => {
-          console.error("Ошибка геолокации:", error);
-          setLocation("Калининград");
-          setLoadingLocation(false);
-        }
-      );
-    } else {
-      setLocation("Калининград");
-      setLoadingLocation(false);
-    }
-  };
-
   // Функция для загрузки бизнесов
   const fetchBusinesses = async () => {
-    if (!location) return;
+    if (!currentLocation) return;
     
     setLoadingBusinesses(true);
     try {
@@ -73,7 +41,7 @@ function App() {
       const businessesRef = collection(db, "businesses");
       const q = query(
         businessesRef,
-        where("city", "==", location),
+        where("city", "==", currentLocation),
         limit(4)
       );
       
@@ -103,7 +71,7 @@ function App() {
 
   useEffect(() => {
     fetchBusinesses();
-  }, [location]);
+  }, [currentLocation]);
 
   return (
     <Box sx={{ 
@@ -231,9 +199,9 @@ function App() {
               alignItems: 'center',
               gap: '1vw'
             }}>
-              <IconButton onClick={getLocation}>
-                    <PlaceRoundedIcon />
-                    <Typography variant="h6" sx={{color: 'black'}}>{location}</Typography>
+              <IconButton onClick={getLocation} disabled={loadingLocation}>
+                {loadingLocation ? <CircularProgress size={20} /> : <PlaceRoundedIcon />}
+                <Typography variant="h6" sx={{color: 'black'}}>{currentLocation}</Typography>
               </IconButton>
             </Box>
             <Box sx={{
@@ -273,4 +241,4 @@ function App() {
   )
 }
 
-export default App
+export default FirstPage
