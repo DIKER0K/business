@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Box from '@mui/material/Box';
 import { Typography, IconButton, createSvgIcon, CircularProgress, TextField, Button, Avatar, Grid, Select, MenuItem, FormControl } from '@mui/material';
 import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
@@ -10,12 +10,6 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import { motion } from 'framer-motion';
 import PlaceRoundedIcon from '@mui/icons-material/PlaceRounded';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
-import { getStorage } from 'firebase/storage';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { addDoc, collection } from 'firebase/firestore';
 
 const VkIcon = createSvgIcon(
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path className="st0" d="M13.162 18.994c.609 0 .858-.406.851-.915-.031-1.917.714-2.949 2.059-1.604 1.488 1.488 1.796 2.519 3.603 2.519h3.2c.808 0 1.126-.26 1.126-.668 0-.863-1.421-2.386-2.625-3.504-1.686-1.565-1.765-1.602-.313-3.486 1.801-2.339 4.157-5.336 2.073-5.336h-3.981c-.772 0-.828.435-1.103 1.083-.995 2.347-2.886 5.387-3.604 4.922-.751-.485-.407-2.406-.35-5.261.015-.754.011-1.271-1.141-1.539-.629-.145-1.241-.205-1.809-.205-2.273 0-3.841.953-2.95 1.119 1.571.293 1.42 3.692 1.054 5.16-.638 2.556-3.036-2.024-4.035-4.305-.241-.548-.315-.974-1.175-.974h-3.255c-.492 0-.787.16-.787.516 0 .602 2.96 6.72 5.786 9.77 2.756 2.975 5.48 2.708 7.376 2.708z"/></svg>,
@@ -28,6 +22,8 @@ interface NavigationPanelProps {
   selectedBusiness: any | null;
   favorites: string[];
   toggleFavorite: (businessId: string) => void;
+  user: any;
+  handleLogout: () => void;
 }
 
 function NavigationPanel({ 
@@ -35,7 +31,7 @@ function NavigationPanel({
   setActiveTab, 
   selectedBusiness, 
   favorites, 
-  toggleFavorite 
+  toggleFavorite,
 }: NavigationPanelProps) {
   const [location, setLocation] = useState("Калининград");
   const [loading, setLoading] = useState(false);
@@ -51,11 +47,6 @@ function NavigationPanel({
   const [businessPhone, setBusinessPhone] = useState("");
   const [businessEmail, setBusinessEmail] = useState("");
   const [businessWebsite, setBusinessWebsite] = useState("");
-
-  // Добавляем состояние для модального окна
-  const [openBusinessModal, setOpenBusinessModal] = useState<boolean>(false);
-  const [businessError, setBusinessError] = useState<string>("");
-  const [businessSuccess, setBusinessSuccess] = useState<boolean>(false);
 
   const getLocation = () => {
     setLoading(true);
@@ -98,84 +89,6 @@ function NavigationPanel({
       setBusinessPhoto(event.target.files[0]);
     }
   };
-
-  // Функция для создания бизнеса
-  const handleCreateBusiness = async () => {
-    if (!businessName || !businessDescription || !businessCity || !businessPhone) {
-      setBusinessError("Пожалуйста, заполните все обязательные поля");
-      return;
-    }
-    
-    setIsSubmitting(true);
-    setBusinessError("");
-    
-    try {
-      const auth = getAuth();
-      const user = auth.currentUser;
-      
-      if (!user) {
-        setBusinessError("Для создания бизнеса необходимо авторизоваться");
-        setIsSubmitting(false);
-        return;
-      }
-      
-      const db = getFirestore();
-      const storage = getStorage();
-      
-      let photoURL = null;
-      
-      if (businessPhoto) {
-        const storageRef = ref(storage, `businesses/${user.uid}/${Date.now()}_${businessPhoto.name}`);
-        await uploadBytes(storageRef, businessPhoto);
-        photoURL = await getDownloadURL(storageRef);
-      }
-      
-      const businessData = {
-        name: businessName,
-        description: businessDescription,
-        hours: businessHours,
-        city: businessCity,
-        type: businessType,
-        phone: businessPhone,
-        email: businessEmail,
-        website: businessWebsite,
-        photoURL: photoURL,
-        ownerId: user.uid,
-        ownerEmail: user.email,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      };
-      
-      const docRef = await addDoc(collection(db, "businesses"), businessData);
-      
-      console.log("Бизнес успешно создан с ID:", docRef.id);
-      setBusinessSuccess(true);
-      
-      // Сбросить форму
-      setBusinessName("");
-      setBusinessDescription("");
-      setBusinessHours("");
-      setBusinessCity("");
-      setBusinessType("кафе");
-      setBusinessPhone("");
-      setBusinessEmail("");
-      setBusinessWebsite("");
-      setBusinessPhoto(null);
-      
-      // Закрыть модальное окно через 2 секунды
-      setTimeout(() => {
-        setBusinessSuccess(false);
-        setOpenBusinessModal(false);
-      }, 2000);
-      
-    } catch (error) {
-      console.error("Ошибка при создании бизнеса:", error);
-      setBusinessError("Произошла ошибка при создании бизнеса. Пожалуйста, попробуйте снова.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
   return (
     <motion.div
       style={{
@@ -318,7 +231,6 @@ function NavigationPanel({
               sx={{color: 'white', backgroundColor: '#1d1d1d', borderRadius: '1vw'}} 
               variant="contained" 
               color="primary"
-              onClick={handleCreateBusiness}
               disabled={isSubmitting}
             >
               {isSubmitting ? <CircularProgress size={24} color="inherit" /> : "Добавить бизнес"}
@@ -395,7 +307,8 @@ function NavigationPanel({
             transform: 'translate(-50%, -50%)',
             display: 'flex',
             alignItems: 'center',
-            }}>
+            gap: '1.5vw'
+        }}>
             <VkIcon />
             <TelegramIcon />
             <InstagramIcon />

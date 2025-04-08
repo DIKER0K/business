@@ -29,6 +29,7 @@ import { ref, uploadBytes, getDownloadURL, getStorage } from "firebase/storage";
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import BusinessCard from '../components/BusinessCard';
+import { useNavigate } from 'react-router-dom';
 
 const DarkModeSwitch = styled(Switch)(({ theme }) => ({
   width: 62,
@@ -112,14 +113,18 @@ function StartPage() {
     const auth = getAuth(app);
     const db = getFirestore(app);
     const storage = getStorage(app);
+    const navigate = useNavigate();
     
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
+            if (currentUser) {
+                navigate('/app');
+            }
         });
         
         return () => unsubscribe();
-    }, [auth]);
+    }, [auth, navigate]);
     
     useEffect(() => {
         setBusinessCity(location);
