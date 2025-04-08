@@ -14,7 +14,22 @@
 }
 
 body {
-  color: black
+  color: black;
+  margin: 0;
+  padding: 0;
+}
+
+/* Добавляем класс для страниц с прокруткой */
+.scrollable-page {
+  overflow-y: auto;
+  height: auto;
+  min-height: 100vh;
+}
+
+/* Добавляем класс для страниц без прокрутки */
+.non-scrollable-page {
+  overflow: hidden;
+  height: 100vh;
 }
 
 
