@@ -16,47 +16,19 @@ const VkIcon = createSvgIcon(
 interface NavigationPanelProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
+  currentLocation: string;
+  loadingLocation: boolean;
+  getLocation: () => void;
 }
 
-function NavigationPanel({ activeTab, setActiveTab }: NavigationPanelProps) {
-  const [currentLocation, setCurrentLocation] = useState("Калининград");
-  const [loading, setLoading] = useState(false);
+function NavigationPanel({ 
+  activeTab, 
+  setActiveTab,
+  currentLocation,
+  loadingLocation,
+  getLocation
+}: NavigationPanelProps) {
   const location = useLocation();
-
-  const getLocation = () => {
-    setLoading(true);
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          try {
-            const { latitude, longitude } = position.coords;
-            const response = await fetch(
-              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10&accept-language=ru`
-            );
-            const data = await response.json();
-            const city = data.address.city || 
-                        data.address.town || 
-                        data.address.village || 
-                        "Калининград";
-            setCurrentLocation(city);
-          } catch (error) {
-            console.error("Ошибка при определении местоположения:", error);
-            setCurrentLocation("Калининград");
-          } finally {
-            setLoading(false);
-          }
-        },
-        (error) => {
-          console.error("Ошибка геолокации:", error);
-          setCurrentLocation("Калининград");
-          setLoading(false);
-        }
-      );
-    } else {
-      setCurrentLocation("Калининград");
-      setLoading(false);
-    }
-  };
 
   return (
     <motion.div
@@ -165,14 +137,14 @@ function NavigationPanel({ activeTab, setActiveTab }: NavigationPanelProps) {
           <TelegramIcon />
           <InstagramIcon />
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <IconButton onClick={getLocation} disabled={loading} size="small">
-              {loading ? 
+            <IconButton onClick={getLocation} disabled={loadingLocation} size="small">
+              {loadingLocation ? 
                 <CircularProgress size={20} sx={{ color: 'black' }} /> : 
                 <PlaceRoundedIcon sx={{ color: 'black', fontSize: '1.2vw' }} />
               }
             </IconButton>
             <Typography sx={{ color: 'black', fontSize: '0.9vw', mr: '0.5vw' }}>
-              {loading ? 'Определение...' : currentLocation}
+              {loadingLocation ? 'Определение...' : currentLocation}
             </Typography>
           </Box>
         </Box>
