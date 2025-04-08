@@ -37,10 +37,10 @@ const DarkModeSwitch = styled(Switch)(({ theme }) => ({
   '& .MuiSwitch-switchBase': {
     margin: 1,
     padding: 0,
-    transform: 'translateX(6px)',
+    transform: 'translateX(0.3vw)',
     '&.Mui-checked': {
       color: '#fff',
-      transform: 'translateX(22px)',
+      transform: 'translateX(1.1vw)',
       '& .MuiSwitch-thumb': {
         backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 20 20"><path fill="${encodeURIComponent(
           '#fff',
@@ -450,10 +450,10 @@ function StartPage() {
                         backgroundColor: 'transparent',
                         color: 'white',
                         textTransform: 'none',
-                        borderRadius: '999px',
-                        padding: '10px 16px',
+                        borderRadius: '0.6vw',
+                        padding: '0.6vw 1.1vw',
                         fontWeight: 500,
-                        fontSize: '16px',
+                        fontSize: '1.1vw',
                         '&:hover': {
                             backgroundColor: 'transparent',
                             boxShadow: 'none'
@@ -471,10 +471,10 @@ function StartPage() {
                         backgroundColor: 'transparent',
                         color: 'white',
                         textTransform: 'none',
-                        borderRadius: '999px',
-                        padding: '10px 16px',
+                        borderRadius: '0.6vw',
+                        padding: '0.6vw 1.1vw',
                         fontWeight: 500,
-                        fontSize: '16px',
+                        fontSize: '1.1vw',
                         '&:hover': {
                             backgroundColor: 'transparent',
                             boxShadow: 'none'
@@ -495,8 +495,8 @@ function StartPage() {
             flexDirection: 'column', 
             justifyContent: 'center', 
             marginTop: '-28vw',
-            gap: '16px',
-            width: '300px'
+            gap: '1.1vw',
+            width: '15.6vw'
         }}>            
             <Typography variant="h6" sx={{color: 'white', mt: 4, mb: 2}}>
                 Создание бизнеса
@@ -592,10 +592,10 @@ function StartPage() {
                     backgroundColor: 'transparent',
                     color: 'white',
                     textTransform: 'none',
-                    borderRadius: '999px',
-                    padding: '10px 16px',
+                    borderRadius: '0.6vw',
+                    padding: '0.6vw 1.1vw',
                     fontWeight: 500,
-                    fontSize: '16px',
+                    fontSize: '1.1vw',
                     boxShadow: 'none',
                     mt: 2
                 }}
@@ -629,10 +629,10 @@ function StartPage() {
                     backgroundColor: '#646cff',
                     color: 'white',
                     textTransform: 'none',
-                    borderRadius: '999px',
-                    padding: '10px 16px',
+                    borderRadius: '0.6vw',
+                    padding: '0.6vw 1.1vw',
                     fontWeight: 500,
-                    fontSize: '16px',
+                    fontSize: '1.1vw',
                     '&:hover': {
                         backgroundColor: '#535bf2',
                         boxShadow: 'none'
@@ -649,7 +649,7 @@ function StartPage() {
             </Button>
         </Box> */}
         <Box sx={{marginTop: '-28vw'}}>
-            <Box sx={{ mt: 4, width: '100%', maxWidth: '1200px', px: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'column' }}>
+            <Box sx={{ mt: 4, width: '100%', maxWidth: '62.5vw', px: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'column' }}>
                 <Typography variant="h5" sx={{ color: 'white', mb: 3, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     В {location}е
                 </Typography>
@@ -664,11 +664,11 @@ function StartPage() {
                         alignItems: 'center',
                         justifyContent: 'center',
                         textTransform: 'none',
-                        borderRadius: '999px',
-                        padding: '10px 16px',
+                        borderRadius: '0.6vw',
+                        padding: '0.6vw 1.1vw',
                         fontWeight: 500,
-                        marginBottom: '10px',
-                        fontSize: '16px',
+                        marginBottom: '1.1vw',
+                        fontSize: '1.1vw',
                         '&:hover': {
                             backgroundColor: 'rgba(255,255,255,0.1)',
                             boxShadow: 'none'
@@ -687,8 +687,8 @@ function StartPage() {
                         style: {
                             backgroundColor: '#212121',
                             color: 'white',
-                            borderRadius: '12px',
-                            maxHeight: '300px'
+                            borderRadius: '0.6vw',
+                            maxHeight: '15.6vw'
                         }
                     }}
                 >
@@ -737,7 +737,7 @@ function StartPage() {
                         gap: { xs: 2, sm: 3 },
                         justifyContent: 'center',
                         width: '100%',
-                        maxWidth: '1400px',  // Максимальная ширина контейнера
+                        maxWidth: '72.9vw',  // Максимальная ширина контейнера
                         mx: 'auto'           // Центрирование по горизонтали
                     }}>
                         {businesses.map((business) => (
@@ -748,9 +748,9 @@ function StartPage() {
                     <Box sx={{ 
                         bgcolor: 'rgba(0,0,0,0.3)', 
                         p: 4, 
-                        borderRadius: 2,
+                        borderRadius: '0.6vw',
                         textAlign: 'center',
-                        border: '1px solid rgba(255,255,255,0.1)'
+                        border: '0.1vw solid rgba(255,255,255,0.1)'
                     }}>
                         <Typography variant="body1" sx={{ color: 'white', mb: 2 }}>
                             В городе {location} пока нет бизнесов
@@ -764,8 +764,8 @@ function StartPage() {
         </Box>
         <Box sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 4}}>
             <Button variant="contained" color="primary" sx={{
-                borderRadius: '999px', 
-                padding: '15px 20px', 
+                borderRadius: '0.6vw', 
+                padding: '0.6vw 1.1vw', 
                 fontWeight: 800, 
                 fontSize: '1.2vw', 
                 backgroundColor: '#FFFFFF', 
@@ -776,33 +776,151 @@ function StartPage() {
                 Смотреть еще
             </Button>
         </Box>
-        <Box sx={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', mt: 4}}>
+        <Box sx={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', mt: '10vw'}}>
             <Typography variant="h1" sx={{color: 'rgba(255, 255, 255, 1)', fontWeight: 800, fontSize: '3vw', fontFamily: 'benzin-bold !important'}}>
                 НАША МИССИЯ
             </Typography>
-            <img src={'old_logo.svg'} alt="old_logo" style={{width: '130vw', height: '130vw', marginTop: '-24vw'}} />
-            <Typography variant="h1" sx={{color: 'rgba(255, 255, 255, 1)', fontWeight: 800, fontSize: '3vw', fontFamily: 'benzin-bold !important', marginTop: '-20vw'}}>
+            <img src={'old_logo.svg'} alt="old_logo" style={{width: '130vw', height: '130vw', marginTop: '-24vw', marginRight: '1vw'}} />
+        </Box>
+
+        {/* Новый блок контактов на всю ширину */}
+        <Box sx={{
+            width: '100%',
+            backgroundColor: '#2a2a2a',
+            mt: '-10vw',
+            pt: '2vw',
+            pb: '2vw',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center'
+        }}>
+            {/* <Typography variant="h1" sx={{
+                color: 'rgba(255, 255, 255, 1)', 
+                fontWeight: 800, 
+                fontSize: '2vw', 
+                fontFamily: 'SF-Pro-Display-Medium !important',
+                mb: '2vw'
+            }}>
                 Свяжитесь с нами
-            </Typography>
-            <Box sx={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', mt: 4, boxShadow: '1vw 1.5vw 4vw 0vw rgba(0, 0, 0, 0.39)', paddingTop: '1.2vw', paddingBottom: '1.2vw', paddingLeft: '3vw', paddingRight: '3vw', borderRadius: '1.5vw'}}>
-                <Typography variant="h1" sx={{color: 'rgba(255, 255, 255, 1)', fontWeight: 800, fontSize: '2vw', fontFamily: 'benzin-bold !important'}}>
-                    г. Калининград
-                </Typography>
-                <Typography variant="h1" sx={{color: 'rgba(255, 255, 255, 1)', fontWeight: 800, fontSize: '2vw', fontFamily: 'benzin-bold !important'}}>
-                    Литовский вал, д.38
-                </Typography>
-            </Box>
-            <Box sx={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', mt: 4, boxShadow: '1vw 1.5vw 4vw 0vw rgba(0, 0, 0, 0.39)', paddingTop: '3vw', paddingBottom: '3vw', paddingLeft: '3vw', paddingRight: '3vw', borderRadius: '1.5vw'}}>
-                <Typography variant="h1" sx={{color: 'rgba(255, 255, 255, 1)', fontWeight: 800, fontSize: '2vw', fontFamily: 'benzin-bold !important'}}>
-                        info@qwerty.town
-                </Typography>
-            </Box>
-            <Box sx={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', mt: 4, boxShadow: '1vw 1.5vw 4vw 0vw rgba(0, 0, 0, 0.39)', paddingTop: '3vw', paddingBottom: '3vw', paddingLeft: '3vw', paddingRight: '3vw', borderRadius: '1.5vw', marginBottom: '3vw'}}>
-                <Typography variant="h1" sx={{color: 'rgba(255, 255, 255, 1)', fontWeight: 800, fontSize: '2vw', fontFamily: 'benzin-bold !important'}}>
-                    +7 (900) 345-49-99
-                </Typography>
+            </Typography> */}
+            
+            <Box sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                width: '95%',
+                px: '2vw'
+            }}>
+                {/* Левая колонка - Контакты */}
+                <Box sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '1vw'
+                }}>
+                    <Typography variant="h2" sx={{
+                        color: 'rgba(255, 255, 255, 0.9)',
+                        fontWeight: 700,
+                        fontSize: '1.5vw',
+                        
+                    }}>
+                        Связь с нами
+                    </Typography>
+                    
+                    <Box sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5vw'
+                    }}>
+                        <Box sx={{
+                            bgcolor: 'rgba(100, 108, 255, 0.2)',
+                            borderRadius: '50%',
+                            width: '2vw',
+                            height: '2vw',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center'
+                        }}>
+                            <TelegramIcon sx={{ fontSize: '1.2vw', color: 'white' }} />
+                        </Box>
+                        <Typography variant="h3" sx={{
+                            color: 'white',
+                            fontWeight: 500,
+                            fontSize: '1vw'
+                        }}>
+                            info@qwerty.town
+                        </Typography>
+                    </Box>
+                    
+                    <Box sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5vw'
+                    }}>
+                        <Box sx={{
+                            bgcolor: 'rgba(100, 108, 255, 0.2)',
+                            borderRadius: '50%',
+                            width: '2vw',
+                            height: '2vw',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center'
+                        }}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1.2vw" height="1.2vw" fill="white" viewBox="0 0 24 24">
+                                <path d="M20 10.999h2C22 5.869 18.127 2 12.99 2v2C17.052 4 20 6.943 20 10.999z"/>
+                                <path d="M13 8c2.103 0 3 .897 3 3h2c0-3.225-1.775-5-5-5v2zm3.422 5.443a1.001 1.001 0 0 0-1.391.043l-2.393 2.461c-.576-.11-1.734-.471-2.926-1.66-1.192-1.193-1.553-2.354-1.66-2.926l2.459-2.394a1 1 0 0 0 .043-1.391L6.859 3.513a1 1 0 0 0-1.391-.087l-2.17 1.861a1 1 0 0 0-.29.649c-.015.25-.301 6.172 4.291 10.766C11.305 20.707 16.323 21 17.705 21c.202 0 .326-.006.359-.008a.992.992 0 0 0 .648-.291l1.86-2.171a1 1 0 0 0-.086-1.391l-4.064-3.696z"/>
+                            </svg>
+                        </Box>
+                        <Typography variant="h3" sx={{
+                            color: 'white',
+                            fontWeight: 500,
+                            fontSize: '1vw'
+                        }}>
+                            +7 (900) 345-49-99
+                        </Typography>
+                    </Box>
+                </Box>
+                
+                {/* Правая колонка - Адрес */}
+                <Box sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '1vw',
+                }}>
+                    <Typography variant="h2" sx={{
+                        color: 'rgba(255, 255, 255, 0.9)',
+                        fontWeight: 700,
+                        fontSize: '1.5vw',
+                    }}>
+                        Найти нас
+                    </Typography>
+                    
+                    <Box sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5vw'
+                    }}>
+                        <Box sx={{
+                            bgcolor: 'rgba(100, 108, 255, 0.2)',
+                            borderRadius: '50%',
+                            width: '2vw',
+                            height: '2vw',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center'
+                        }}>
+                            <PlaceRoundedIcon sx={{ fontSize: '1.2vw', color: 'white' }} />
+                        </Box>
+                        <Typography variant="h3" sx={{
+                            color: 'white',
+                            fontWeight: 500,
+                            fontSize: '1vw'
+                        }}>
+                            г. Калининград, Литовский вал, д.38
+                        </Typography>
+                    </Box>
+                </Box>
             </Box>
         </Box>
+
         <Dialog 
             open={openAuthModal} 
             onClose={handleCloseAuthModal}
@@ -810,7 +928,7 @@ function StartPage() {
                 style: {
                     backgroundColor: '#212121',
                     color: 'white',
-                    borderRadius: '12px'
+                    borderRadius: '0.6vw'
                 }
             }}
         >
@@ -835,7 +953,7 @@ function StartPage() {
                 </Tabs>
             </DialogTitle>
             <DialogContent>
-                <Box sx={{ pt: 2, minWidth: '300px' }}>
+                <Box sx={{ pt: 2, minWidth: '15.6vw' }}>
                     <TextField
                         autoFocus
                         margin="dense"
