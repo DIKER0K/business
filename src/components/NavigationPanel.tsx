@@ -1,12 +1,22 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
-import { Typography, IconButton } from '@mui/material';
+import { Typography, IconButton, createSvgIcon, CircularProgress, TextField, Button } from '@mui/material';
 import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import TelegramIcon from '@mui/icons-material/Telegram';
+import InstagramIcon from '@mui/icons-material/Instagram';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import { motion } from 'framer-motion';
+import PlaceRoundedIcon from '@mui/icons-material/PlaceRounded';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import CreateBusinessForm from './CreateBusinessForm';
+
+const VkIcon = createSvgIcon(
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path className="st0" d="M13.162 18.994c.609 0 .858-.406.851-.915-.031-1.917.714-2.949 2.059-1.604 1.488 1.488 1.796 2.519 3.603 2.519h3.2c.808 0 1.126-.26 1.126-.668 0-.863-1.421-2.386-2.625-3.504-1.686-1.565-1.765-1.602-.313-3.486 1.801-2.339 4.157-5.336 2.073-5.336h-3.981c-.772 0-.828.435-1.103 1.083-.995 2.347-2.886 5.387-3.604 4.922-.751-.485-.407-2.406-.35-5.261.015-.754.011-1.271-1.141-1.539-.629-.145-1.241-.205-1.809-.205-2.273 0-3.841.953-2.95 1.119 1.571.293 1.42 3.692 1.054 5.16-.638 2.556-3.036-2.024-4.035-4.305-.241-.548-.315-.974-1.175-.974h-3.255c-.492 0-.787.16-.787.516 0 .602 2.96 6.72 5.786 9.77 2.756 2.975 5.48 2.708 7.376 2.708z"/></svg>,
+  'VkIcon'
+);
 
 interface NavigationPanelProps {
   activeTab: string;
@@ -23,6 +33,65 @@ function NavigationPanel({
   favorites, 
   toggleFavorite 
 }: NavigationPanelProps) {
+  const [location, setLocation] = useState("Калининград");
+  const [loading, setLoading] = useState(false);
+  
+  // Состояния для формы создания бизнеса
+  const [businessName, setBusinessName] = useState("");
+  const [businessDescription, setBusinessDescription] = useState("");
+  const [businessHours, setBusinessHours] = useState("");
+  const [businessCity, setBusinessCity] = useState("");
+  const [businessPhoto, setBusinessPhoto] = useState<File | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const getLocation = () => {
+    setLoading(true);
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          try {
+            const { latitude, longitude } = position.coords;
+            const response = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10&accept-language=ru`
+            );
+            const data = await response.json();
+            const city = data.address.city || 
+                        data.address.town || 
+                        data.address.village || 
+                        "Калининград";
+            setLocation(city);
+          } catch (error) {
+            console.error("Ошибка при определении местоположения:", error);
+            setLocation("Калининград");
+          } finally {
+            setLoading(false);
+          }
+        },
+        (error) => {
+          console.error("Ошибка геолокации:", error);
+          setLocation("Калининград");
+          setLoading(false);
+        }
+      );
+    } else {
+      setLocation("Калининград");
+      setLoading(false);
+    }
+  };
+
+  // Функция для создания бизнеса
+  const handleCreateBusiness = async () => {
+    // Здесь будет логика создания бизнеса
+    // Это заглушка, которую нужно будет заменить реальным кодом
+    console.log("Создание бизнеса:", {
+      name: businessName,
+      description: businessDescription,
+      hours: businessHours,
+      city: businessCity,
+      photo: businessPhoto
+    });
+  };
+
   return (
     <motion.div
       style={{
@@ -210,7 +279,59 @@ function NavigationPanel({
             color: activeTab === "locations" ? '#1d1d1d' : 'inherit'
           }}>Локации</Typography>
         </Box>
-      </Box>
+        <Box sx={{
+            position: 'absolute',
+            right: '0vw',
+            top: '50%',
+            transform: 'translate(-50%, -50%)',
+            display: 'flex',
+            alignItems: 'center',
+            }}>
+            <VkIcon />
+            <TelegramIcon />
+            <InstagramIcon />
+            <Box sx={{
+              display: 'flex',
+              alignItems: 'center',
+              }}>
+                <IconButton onClick={getLocation} disabled={loading} size="small">
+                {loading ? 
+                  <CircularProgress size={20} sx={{ color: 'black' }} /> : 
+                  <PlaceRoundedIcon sx={{ color: 'black', fontSize: '1.2vw' }} />
+                }
+              </IconButton>
+              <Typography sx={{ color: 'black', fontSize: '0.9vw', mr: '0.5vw' }}>
+                {loading ? 'Определение...' : location}
+              </Typography>
+              
+          </Box>
+        </Box>
+        </Box>
+
+      {/* Содержимое вкладки "Бизнес" */}
+      {activeTab === "business" && (
+        <Box sx={{
+          padding: '1vw 2vw',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '1vw',
+        }}>
+          <CreateBusinessForm 
+            businessName={businessName}
+            setBusinessName={setBusinessName}
+            businessDescription={businessDescription}
+            setBusinessDescription={setBusinessDescription}
+            businessHours={businessHours}
+            setBusinessHours={setBusinessHours}
+            businessCity={businessCity}
+            setBusinessCity={setBusinessCity}
+            businessPhoto={businessPhoto}
+            setBusinessPhoto={setBusinessPhoto}
+            isSubmitting={isSubmitting}
+            handleCreateBusiness={handleCreateBusiness}
+          />
+        </Box>
+      )}
     </motion.div>
   );
 }
