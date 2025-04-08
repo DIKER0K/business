@@ -272,9 +272,122 @@ function Profile() {
           </Typography>
         </Box>
       );
-    } else if (activeTab === "favorites") {
-      // Код для вкладки "Избранное"
-      // ... существующий код ...
+    } else if (activeTab === "favorites" && selectedBusiness) {
+        // Если выбрана локация, показываем детальную информацию
+        return (
+          <Box sx={{ 
+            p: '1.5vw',
+            height: '100%',
+            position: 'relative',
+            borderRadius: '1vw',
+            overflow: 'hidden'
+          }}>
+            {/* Фоновое изображение */}
+            <Box sx={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              zIndex: 0,
+              '&::after': {
+                content: '""',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                zIndex: 1
+              }
+            }}>
+              {selectedBusiness.photoURL ? (
+                <img 
+                  src={selectedBusiness.photoURL} 
+                  alt={selectedBusiness.name}
+                  style={{ 
+                    width: '100%', 
+                    height: '100%', 
+                    objectFit: 'cover'
+                  }}
+                />
+              ) : (
+                <Box sx={{ 
+                  width: '100%', 
+                  height: '100%', 
+                  bgcolor: '#333'
+                }} />
+              )}
+            </Box>
+            
+            {/* Контент поверх изображения */}
+            <Box sx={{ 
+              position: 'relative', 
+              zIndex: 2,
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              color: 'white'
+            }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                <Typography variant="h4" sx={{ fontSize: '2.2vw', fontWeight: 'bold' }}>
+                  {selectedBusiness.name}
+                </Typography>
+                
+                <IconButton 
+                  onClick={() => setSelectedBusiness(null)}
+                  sx={{ color: 'white' }}
+                >
+                  <CloseIcon />
+                </IconButton>
+              </Box>
+              
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <LocationOnIcon sx={{ mr: 1, fontSize: '1.2vw' }} />
+                <Typography sx={{ fontSize: '1.2vw' }}>
+                  {selectedBusiness.city}
+                </Typography>
+              </Box>
+              
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                <AccessTimeIcon sx={{ mr: 1, fontSize: '1.2vw' }} />
+                <Typography sx={{ fontSize: '1.2vw' }}>
+                  {selectedBusiness.hours}
+                </Typography>
+              </Box>
+              
+              <Typography variant="h6" sx={{ mb: 1, fontSize: '1.4vw' }}>
+                Описание
+              </Typography>
+              
+              <Typography sx={{ fontSize: '1.1vw', mb: 3, maxWidth: '80%' }}>
+                {selectedBusiness.description || "Описание отсутствует"}
+              </Typography>
+              
+              </Box>
+          </Box>
+        );
+      } else if (activeTab === "favorites") {
+        // Если локация не выбрана, показываем пустой экран с инструкцией
+        return (
+          <Box sx={{ 
+            p: '1.5vw',
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            color: '#666'
+          }}>
+            <LocationOnIcon sx={{ fontSize: '4vw', mb: 2, color: '#ccc' }} />
+            <Typography variant="h5" sx={{ mb: 1, fontSize: '1.6vw' }}>
+              Выберите локацию
+            </Typography>
+            <Typography sx={{ fontSize: '1.1vw', textAlign: 'center', maxWidth: '60%' }}>
+              Выберите локацию из списка справа, чтобы увидеть подробную информацию
+            </Typography>
+          </Box>
+        );
     } else if (activeTab === "settings") {
       // Код для вкладки "Настройки"
       // ... существующий код ...
@@ -548,7 +661,10 @@ function Profile() {
                         .map((business) => (
                           <Box 
                             key={business.id}
-                            onClick={() => setSelectedBusiness(business)}
+                            onClick={() => {
+                              setSelectedBusiness(business);
+                              // Не переключаем вкладку, просто устанавливаем выбранный бизнес
+                            }}
                             sx={{ 
                               display: 'flex', 
                               alignItems: 'center',
@@ -687,20 +803,38 @@ function Profile() {
           alignItems: 'center',
           width: '100%',
           zIndex: 1,
-          gap: '3vw'
+          gap: '3vw',
+          position: 'relative'
         }}>
           <Box 
             sx={{ 
               display: 'flex', 
               flexDirection: 'column', 
               alignItems: 'center',
-              color: activeTab === "business" ? '#646cff' : 'inherit',
               cursor: 'pointer'
             }}
             onClick={() => setActiveTab(activeTab === "business" ? "profile" : "business")}
           >
-            <BusinessCenterIcon sx={{ fontSize: '1.8vw', mb: '0.3vw' }} />
-            <Typography variant="body2" sx={{fontSize: '1vw'}}>Бизнес</Typography>
+            <Box sx={{ 
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: activeTab === "business" ? '#1d1d1d' : 'transparent',
+              borderRadius: '50%',
+              padding: activeTab === "business" ? '0.8vw' : '0',
+              boxShadow: activeTab === "business" ? '0 2px 8px rgba(0,0,0,0.1)' : 'none',
+              transition: 'all 0.2s ease',
+              mb: '0.3vw'
+            }}>
+              <BusinessCenterIcon sx={{ 
+                fontSize: '1.8vw', 
+                color: activeTab === "business" ? '#fff' : 'inherit'
+              }} />
+            </Box>
+            <Typography variant="body2" sx={{
+              fontSize: '1vw',
+              color: activeTab === "business" ? '#1d1d1d' : 'inherit'
+            }}>Бизнес</Typography>
           </Box>
           
           <Box 
@@ -708,27 +842,97 @@ function Profile() {
               display: 'flex', 
               flexDirection: 'column', 
               alignItems: 'center',
-              color: activeTab === "favorites" ? '#646cff' : 'inherit',
               cursor: 'pointer'
             }}
             onClick={() => setActiveTab(activeTab === "favorites" ? "profile" : "favorites")}
           >
-            <FavoriteIcon sx={{ fontSize: '1.8vw', mb: '0.3vw' }} />
-            <Typography variant="body2" sx={{fontSize: '1vw'}}>Избранное</Typography>
+            <Box sx={{ 
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: activeTab === "favorites" ? '#1d1d1d' : 'transparent',
+              borderRadius: '50%',
+              padding: activeTab === "favorites" ? '0.8vw' : '0',
+              boxShadow: activeTab === "favorites" ? '0 2px 8px rgba(0,0,0,0.1)' : 'none',
+              transition: 'all 0.2s ease',
+              mb: '0.3vw'
+            }}>
+              <FavoriteIcon sx={{ 
+                fontSize: '1.8vw', 
+                color: activeTab === "favorites" ? '#fff' : 'inherit'
+              }} />
+            </Box>
+            <Typography variant="body2" sx={{
+              fontSize: '1vw',
+              color: activeTab === "favorites" ? '#1d1d1d' : 'inherit',
+            }}>Избранное</Typography>
           </Box>
+          
+          {/* Кнопка лайка по центру - показывается только когда выбрана локация */}
+          {(activeTab === "locations" || activeTab === "favorites") && selectedBusiness && (
+            <Box 
+              sx={{ 
+                position: 'absolute',
+                left: '49vw',
+                top: '50%',
+                transform: 'translate(-50%, -50%)',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                zIndex: 2
+              }}
+            >
+              <IconButton 
+                onClick={() => toggleFavorite(selectedBusiness.id)}
+                sx={{ 
+                  color: favorites.includes(selectedBusiness.id) ? 'red' : '#1d1d1d',
+                  backgroundColor: 'white',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+                  padding: '0.8vw',
+                  '&:hover': { 
+                    backgroundColor: '#fff',
+                    transform: 'scale(1.05)'
+                  },
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                {favorites.includes(selectedBusiness.id) ? 
+                  <FavoriteIcon sx={{ fontSize: '2vw' }} /> : 
+                  <FavoriteBorderIcon sx={{ fontSize: '2vw' }} />
+                }
+              </IconButton>
+            </Box>
+          )}
           
           <Box 
             sx={{ 
               display: 'flex', 
               flexDirection: 'column', 
               alignItems: 'center',
-              color: activeTab === "settings" ? '#646cff' : 'inherit',
               cursor: 'pointer'
             }}
             onClick={() => setActiveTab(activeTab === "settings" ? "profile" : "settings")}
           >
-            <SettingsIcon sx={{ fontSize: '1.8vw', mb: '0.3vw' }} />
-            <Typography variant="body2" sx={{fontSize: '1vw'}}>Настройки</Typography>
+            <Box sx={{ 
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: activeTab === "settings" ? '#1d1d1d' : 'transparent',
+              borderRadius: '50%',
+              padding: activeTab === "settings" ? '0.8vw' : '0',
+              boxShadow: activeTab === "settings" ? '0 2px 8px rgba(0,0,0,0.1)' : 'none',
+              transition: 'all 0.2s ease',
+              mb: '0.3vw'
+            }}>
+              <SettingsIcon sx={{ 
+                fontSize: '1.8vw', 
+                color: activeTab === "settings" ? '#fff' : 'inherit'
+              }} />
+            </Box>
+            <Typography variant="body2" sx={{
+              fontSize: '1vw',
+              color: activeTab === "settings" ? '#1d1d1d' : 'inherit',
+            }}>Настройки</Typography>
           </Box>
           
           <Box 
@@ -736,13 +940,30 @@ function Profile() {
               display: 'flex', 
               flexDirection: 'column', 
               alignItems: 'center',
-              color: activeTab === "locations" ? '#646cff' : 'inherit',
               cursor: 'pointer'
             }}
             onClick={() => setActiveTab(activeTab === "locations" ? "profile" : "locations")}
           >
-            <LocationOnIcon sx={{ fontSize: '1.8vw', mb: '0.3vw' }} />
-            <Typography variant="body2" sx={{fontSize: '1vw'}}>Локации</Typography>
+            <Box sx={{ 
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: activeTab === "locations" ? '#1d1d1d' : 'transparent',
+              borderRadius: '50%',
+              padding: activeTab === "locations" ? '0.8vw' : '0',
+              boxShadow: activeTab === "locations" ? '0 2px 8px rgba(0,0,0,0.1)' : 'none',
+              transition: 'all 0.2s ease',
+              mb: '0.3vw'
+            }}>
+              <LocationOnIcon sx={{ 
+                fontSize: '1.8vw', 
+                color: activeTab === "locations" ? '#fff' : 'inherit'
+              }} />
+            </Box>
+            <Typography variant="body2" sx={{
+              fontSize: '1vw',
+              color: activeTab === "locations" ? '#1d1d1d' : 'inherit'
+            }}>Локации</Typography>
           </Box>
         </Box>
         
