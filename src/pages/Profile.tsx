@@ -248,42 +248,7 @@ function Profile() {
               {selectedBusiness.description || "Описание отсутствует"}
             </Typography>
             
-            <Box sx={{ mt: 'auto', display: 'flex', gap: 2 }}>
-              <Button 
-                variant="contained" 
-                sx={{ 
-                  borderRadius: '2vw',
-                  textTransform: 'none',
-                  fontSize: '1vw',
-                  px: '1.5vw'
-                }}
-              >
-                Забронировать
-              </Button>
-              
-              <Button 
-                variant="outlined" 
-                sx={{ 
-                  borderRadius: '2vw',
-                  textTransform: 'none',
-                  fontSize: '1vw',
-                  px: '1.5vw',
-                  color: 'white',
-                  borderColor: 'white',
-                  '&:hover': {
-                    borderColor: 'white',
-                    backgroundColor: 'rgba(255,255,255,0.1)'
-                  }
-                }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toggleFavorite(selectedBusiness.id);
-                }}
-              >
-                {favorites.includes(selectedBusiness.id) ? 'Удалить из избранного' : 'Добавить в избранное'}
-              </Button>
             </Box>
-          </Box>
         </Box>
       );
     } else if (activeTab === "locations") {
@@ -323,7 +288,7 @@ function Profile() {
     <Box sx={{ 
       display: 'flex', 
       flexDirection: 'column', 
-      height: '100vh', 
+      height: '48vw', 
       bgcolor: '#1d1d1d',
       overflow: 'hidden'
     }}>
@@ -340,7 +305,7 @@ function Profile() {
           flex: 1,
           bgcolor: 'white',
           borderRadius: '1vw',
-          overflow: 'hidden'
+          overflow: 'hidden',
         }}>
           {loading ? (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
@@ -421,88 +386,115 @@ function Profile() {
                   <Box sx={{ 
                     display: 'flex', 
                     flexDirection: 'column', 
-                    gap: 1, 
+                    gap: '0.5vw', 
                     flexGrow: 1,
                     overflow: 'auto',
-                    maxHeight: '20vw'
+                    maxHeight: 'calc(100% - 3vw)', // Оставляем место только для заголовка
+                    width: '100%',
+                    '&::-webkit-scrollbar': {
+                      width: '0.4vw',
+                    },
+                    '&::-webkit-scrollbar-track': {
+                      background: '#f1f1f1',
+                      borderRadius: '0.2vw',
+                    },
+                    '&::-webkit-scrollbar-thumb': {
+                      background: '#888',
+                      borderRadius: '0.2vw',
+                    },
+                    '&::-webkit-scrollbar-thumb:hover': {
+                      background: '#555',
+                    },
                   }}>
                     {loadingBusinesses ? (
                       <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
                         <CircularProgress size={24} />
                       </Box>
                     ) : businesses.length > 0 ? (
-                      // Получаем текущую страницу бизнесов
-                      businesses.slice(
-                        currentPage * itemsPerPage, 
-                        (currentPage + 1) * itemsPerPage
-                      ).map((business) => (
+                      businesses.map((business) => (
                         <Box 
                           key={business.id}
+                          onClick={() => setSelectedBusiness(business)}
                           sx={{ 
-                            display: 'flex',
+                            display: 'flex', 
                             alignItems: 'center',
-                            p: '0.8vw',
-                            borderRadius: '0.5vw',
+                            justifyContent: 'space-between',
+                            width: '100%',
+                            height: '3.8vw', // Фиксированная высота для всех кнопок
+                            borderRadius: '0.8vw',
+                            backgroundImage: business.photoURL ? `url(${business.photoURL})` : 'none',
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'center',
+                            bgcolor: business.photoURL ? 'transparent' : '#eee',
+                            position: 'relative',
+                            overflow: 'hidden',
                             cursor: 'pointer',
-                            transition: 'background-color 0.2s',
-                            backgroundColor: selectedBusiness?.id === business.id ? 'rgba(0,0,0,0.05)' : 'transparent',
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                            transition: 'transform 0.2s ease',
+                            flexShrink: 0, // Предотвращает сжатие элементов
+                            '&::before': {
+                              content: '""',
+                              position: 'absolute',
+                              top: 0,
+                              left: 0,
+                              right: 0,
+                              bottom: 0,
+                              backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                              transition: 'background-color 0.3s ease'
+                            },
                             '&:hover': {
-                              backgroundColor: 'rgba(0,0,0,0.05)'
+                              transform: 'translateY(-2px)',
+                              boxShadow: '0 4px 8px rgba(0,0,0,0.15)',
+                              '&::before': {
+                                backgroundColor: 'rgba(0, 0, 0, 0.6)'
+                              },
+                              '& .business-hours': {
+                                opacity: 1,
+                                transform: 'translateX(0)'
+                              }
                             }
                           }}
-                          onClick={() => handleSelectBusiness(business)}
                         >
                           <Box sx={{ 
-                            width: '3vw', 
-                            height: '3vw', 
-                            borderRadius: '0.5vw',
-                            overflow: 'hidden',
-                            mr: '0.8vw',
-                            bgcolor: '#f0f0f0',
-                            flexShrink: 0
+                            position: 'relative', 
+                            zIndex: 1, 
+                            display: 'flex', 
+                            flexDirection: 'column',
+                            justifyContent: 'center',
+                            pl: 1.5
                           }}>
-                            {business.photoURL ? (
-                              <img 
-                                src={business.photoURL} 
-                                alt={business.name}
-                                style={{ 
-                                  width: '100%', 
-                                  height: '100%', 
-                                  objectFit: 'cover'
-                                }}
-                              />
-                            ) : (
-                              <Box sx={{ 
-                                width: '100%', 
-                                height: '100%', 
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center'
-                              }}>
-                                <LocationOnIcon sx={{ fontSize: '1.5vw', color: '#999' }} />
-                              </Box>
-                            )}
-                          </Box>
-                          
-                          <Box sx={{ overflow: 'hidden' }}>
                             <Typography sx={{ 
-                              fontSize: '1vw', 
+                              fontSize: '1.1vw', 
                               fontWeight: 'bold',
-                              whiteSpace: 'nowrap',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis'
+                              color: 'white',
+                              textShadow: '0 1px 2px rgba(0,0,0,0.5)'
                             }}>
                               {business.name}
                             </Typography>
-                            
+                          </Box>
+                          
+                          <Box 
+                            className="business-hours"
+                            sx={{ 
+                              position: 'relative', 
+                              zIndex: 1,
+                              pr: 1.5,
+                              opacity: 0,
+                              transform: 'translateX(10px)',
+                              transition: 'opacity 0.3s ease, transform 0.3s ease'
+                            }}
+                          >
                             <Typography sx={{ 
-                              fontSize: '0.8vw', 
-                              color: '#666',
-                              whiteSpace: 'nowrap',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis'
+                              fontSize: '0.9vw', 
+                              color: 'white',
+                              display: 'flex',
+                              alignItems: 'center',
+                              backgroundColor: 'rgba(0,0,0,0.5)',
+                              padding: '0.3vw 0.6vw',
+                              borderRadius: '1vw'
                             }}>
-                              {business.city}
+                              <AccessTimeIcon sx={{ fontSize: '0.9vw', mr: 0.5 }} />
+                              {business.hours}
                             </Typography>
                           </Box>
                         </Box>
@@ -513,60 +505,155 @@ function Profile() {
                       </Typography>
                     )}
                   </Box>
+                </>
+              )}
+              
+              {/* В правой панели для вкладки "favorites" */}
+              {activeTab === "favorites" && (
+                <>
+                  <Typography sx={{ fontSize: '1.2vw', fontWeight: 'bold', mb: 1 }}>
+                    Избранное
+                  </Typography>
                   
-                  {/* Пагинация со стрелками */}
-                  {businesses.length > itemsPerPage && (
-                    <Box sx={{ 
-                      display: 'flex', 
-                      justifyContent: 'center', 
-                      alignItems: 'center',
-                      mt: 'auto',
-                      pt: 2,
-                      gap: 2
-                    }}>
-                      <IconButton 
-                        disabled={currentPage === 0}
-                        onClick={() => setCurrentPage(prev => prev - 1)}
-                        sx={{ 
-                          bgcolor: currentPage === 0 ? 'rgba(0,0,0,0.05)' : 'white',
-                          '&:hover': {
-                            bgcolor: 'rgba(0,0,0,0.1)'
-                          }
-                        }}
-                      >
-                        <ArrowBackIosNewIcon sx={{ fontSize: '1vw' }} />
-                      </IconButton>
-                      
-                      <Typography sx={{ fontSize: '1vw' }}>
-                        {currentPage + 1} из {Math.ceil(businesses.length / itemsPerPage)}
+                  <Box sx={{ 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    gap: '0.5vw', 
+                    flexGrow: 1,
+                    overflow: 'auto',
+                    maxHeight: 'calc(100% - 3vw)', // Оставляем место только для заголовка
+                    width: '100%',
+                    '&::-webkit-scrollbar': {
+                      width: '0.4vw',
+                    },
+                    '&::-webkit-scrollbar-track': {
+                      background: '#f1f1f1',
+                      borderRadius: '0.2vw',
+                    },
+                    '&::-webkit-scrollbar-thumb': {
+                      background: '#888',
+                      borderRadius: '0.2vw',
+                    },
+                    '&::-webkit-scrollbar-thumb:hover': {
+                      background: '#555',
+                    },
+                  }}>
+                    {loadingBusinesses || loadingFavorites ? (
+                      <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
+                        <CircularProgress size={24} />
+                      </Box>
+                    ) : favorites.length > 0 ? (
+                      businesses
+                        .filter(business => favorites.includes(business.id))
+                        .map((business) => (
+                          <Box 
+                            key={business.id}
+                            onClick={() => setSelectedBusiness(business)}
+                            sx={{ 
+                              display: 'flex', 
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              width: '100%',
+                              height: '3.8vw', // Фиксированная высота для всех кнопок
+                              borderRadius: '0.8vw',
+                              backgroundImage: business.photoURL ? `url(${business.photoURL})` : 'none',
+                              backgroundSize: 'cover',
+                              backgroundPosition: 'center',
+                              bgcolor: business.photoURL ? 'transparent' : '#eee',
+                              position: 'relative',
+                              overflow: 'hidden',
+                              cursor: 'pointer',
+                              boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                              transition: 'transform 0.2s ease',
+                              flexShrink: 0, // Предотвращает сжатие элементов
+                              '&::before': {
+                                content: '""',
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                right: 0,
+                                bottom: 0,
+                                backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                                transition: 'background-color 0.3s ease'
+                              },
+                              '&:hover': {
+                                transform: 'translateY(-2px)',
+                                boxShadow: '0 4px 8px rgba(0,0,0,0.15)',
+                                '&::before': {
+                                  backgroundColor: 'rgba(0, 0, 0, 0.6)'
+                                },
+                                '& .business-hours': {
+                                  opacity: 1,
+                                  transform: 'translateX(0)'
+                                }
+                              }
+                            }}
+                          >
+                            <Box sx={{ 
+                              position: 'relative', 
+                              zIndex: 1, 
+                              display: 'flex', 
+                              flexDirection: 'column',
+                              justifyContent: 'center',
+                              pl: 1.5
+                            }}>
+                              <Typography sx={{ 
+                                fontSize: '1.1vw', 
+                                fontWeight: 'bold',
+                                color: 'white',
+                                textShadow: '0 1px 2px rgba(0,0,0,0.5)'
+                              }}>
+                                {business.name}
+                              </Typography>
+                            </Box>
+                            
+                            <Box 
+                              className="business-hours"
+                              sx={{ 
+                                position: 'relative', 
+                                zIndex: 1,
+                                pr: 1.5,
+                                opacity: 0,
+                                transform: 'translateX(10px)',
+                                transition: 'opacity 0.3s ease, transform 0.3s ease'
+                              }}
+                            >
+                              <Typography sx={{ 
+                                fontSize: '0.9vw', 
+                                color: 'white',
+                                display: 'flex',
+                                alignItems: 'center',
+                                backgroundColor: 'rgba(0,0,0,0.5)',
+                                padding: '0.3vw 0.6vw',
+                                borderRadius: '1vw'
+                              }}>
+                                <AccessTimeIcon sx={{ fontSize: '0.9vw', mr: 0.5 }} />
+                                {business.hours}
+                              </Typography>
+                            </Box>
+                          </Box>
+                        ))
+                    ) : (
+                      <Typography sx={{ fontSize: '0.9vw', color: '#999', textAlign: 'center', my: 2 }}>
+                        У вас пока нет избранных мест
                       </Typography>
-                      
-                      <IconButton 
-                        disabled={currentPage === Math.ceil(businesses.length / itemsPerPage) - 1}
-                        onClick={() => setCurrentPage(prev => prev + 1)}
-                        sx={{ 
-                          bgcolor: currentPage === Math.ceil(businesses.length / itemsPerPage) - 1 ? 'rgba(0,0,0,0.05)' : 'white',
-                          '&:hover': {
-                            bgcolor: 'rgba(0,0,0,0.1)'
-                          }
-                        }}
-                      >
-                        <ArrowForwardIosIcon sx={{ fontSize: '1vw' }} />
-                      </IconButton>
-                    </Box>
-                  )}
+                    )}
+                  </Box>
                 </>
               )}
               
               {/* Для других вкладок показываем "Недавно посещали" */}
-              {activeTab !== "locations" && (
+              {activeTab !== "locations" && activeTab !== "favorites" && (
                 <>
                   <Typography sx={{ fontSize: '1.2vw', fontWeight: 'bold', mb: 1 }}>
-                    Недавно посещали:
+                    Недавно посещали
                   </Typography>
                   
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, flexGrow: 1 }}>
                     {/* Пока пусто */}
+                    <Typography sx={{ fontSize: '0.9vw', color: '#999', textAlign: 'center', my: 2 }}>
+                      История посещений пуста
+                    </Typography>
                   </Box>
                 </>
               )}
