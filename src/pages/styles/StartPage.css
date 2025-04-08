@@ -6,8 +6,13 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: '';
+  src: url();
+}
+
 body {
-  font-family: 'SF-Pro-Display-Medium', sans-serif;
+  font-family: 'SF-Pro-Display-Medium', sans-serif !important;
   overflow-x: hidden;
 }
 
