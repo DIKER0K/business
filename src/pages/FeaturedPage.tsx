@@ -7,7 +7,7 @@ import PlaceRoundedIcon from '@mui/icons-material/PlaceRounded';
 import { Avatar, Typography, IconButton, Divider, Grid, CircularProgress } from '@mui/material';
 import { getFirestore, collection, getDocs, query, where, limit } from "firebase/firestore";
 
-function App() {
+function FeaturedPage() {
   const [user, setUser] = useState<any>(null);
   const [location, setLocation] = useState("Калининград");
   const [loadingLocation, setLoadingLocation] = useState(false);
@@ -226,4 +226,4 @@ function App() {
   )
 }
 
-export default App
+export default FeaturedPage

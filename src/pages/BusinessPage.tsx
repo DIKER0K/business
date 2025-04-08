@@ -7,7 +7,7 @@ import PlaceRoundedIcon from '@mui/icons-material/PlaceRounded';
 import { Avatar, Typography, IconButton, Divider, Grid, CircularProgress } from '@mui/material';
 import { getFirestore, collection, getDocs, query, where, limit } from "firebase/firestore";
 
-function App() {
+function BusinessPage() {
   const [user, setUser] = useState<any>(null);
   const [location, setLocation] = useState("Калининград");
   const [loadingLocation, setLoadingLocation] = useState(false);
@@ -122,7 +122,7 @@ function App() {
             display: 'flex',
             alignItems: 'center',
           }}>
-            <Typography variant="h6">Возможно, вам понравится хуй в рот:</Typography>
+            <Typography variant="h6">Возможно, вам понравится: 3213</Typography>
           </Box>
           <Grid container spacing={2}>
             {loadingBusinesses ? (
@@ -226,4 +226,4 @@ function App() {
   )
 }
 
-export default App
+export default BusinessPage
