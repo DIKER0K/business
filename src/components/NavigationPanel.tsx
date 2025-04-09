@@ -265,7 +265,7 @@ function NavigationPanel({
 
         <Box 
           component={Link}
-          to="/app"
+          to="/location"
           sx={{ 
             display: 'flex', 
             flexDirection: 'column', 
@@ -278,22 +278,22 @@ function NavigationPanel({
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            backgroundColor: location.pathname === '/app' ? '#1d1d1d' : 'transparent',
+            backgroundColor: location.pathname === '/location' ? '#1d1d1d' : 'transparent',
             borderRadius: '50%',
-            padding: location.pathname === '/app' ? '0.8vw' : '0',
-            boxShadow: location.pathname === '/app' ? '0 2px 8px rgba(0,0,0,0.1)' : 'none',
+            padding: location.pathname === '/location' ? '0.8vw' : '0',
+            boxShadow: location.pathname === '/location' ? '0 2px 8px rgba(0,0,0,0.1)' : 'none',
             transition: 'all 0.2s ease',
             mb: '0.3vw',
             cursor: 'pointer'
           }}>
             <LocationOnRoundedIcon sx={{ 
               fontSize: '1.8vw', 
-              color: location.pathname === '/app' ? '#fff' : '#1d1d1d'
+              color: location.pathname === '/location' ? '#fff' : '#1d1d1d'
             }} />
           </Box>
           <Typography variant="body2" sx={{
             fontSize: '1vw',
-            color: location.pathname === '/app' ? '#1d1d1d' : '#1d1d1d'
+            color: location.pathname === '/location' ? '#1d1d1d' : '#1d1d1d'
           }}>Локации</Typography>
         </Box>
 

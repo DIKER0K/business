@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { app } from '../firebase/config';
 import { Typography} from '@mui/material';
-import { getFirestore, collection, getDocs, query, where, limit } from "firebase/firestore";
+import { getFirestore, collection, getDocs, query, where, limit, doc, getDoc } from "firebase/firestore";
 import RecommendedBusinesses from '../components/RecommendedBusinesses';
 
 // Добавьте интерфейс Business в начало файла
@@ -31,6 +31,7 @@ function RestaurantMenuPage({ currentLocation, loadingLocation, getLocation }: R
   const [loadingBusinesses, setLoadingBusinesses] = useState(false);
   const navigate = useNavigate();
   const auth = getAuth(app);
+  const [currentBusiness, setCurrentBusiness] = useState<Business | null>(null);
 
   // Функция для загрузки бизнесов
   const fetchBusinesses = async () => {
@@ -76,8 +77,21 @@ function RestaurantMenuPage({ currentLocation, loadingLocation, getLocation }: R
 
   useEffect(() => {
     if (businessId) {
-      // Добавьте здесь загрузку данных конкретного бизнеса
-      console.log('Loaded business ID:', businessId);
+      const fetchBusinessData = async () => {
+        try {
+          const db = getFirestore();
+          const docRef = doc(db, "businesses", businessId);
+          const docSnap = await getDoc(docRef);
+          
+          if (docSnap.exists()) {
+            const businessData = { id: docSnap.id, ...docSnap.data() } as Business;
+            setCurrentBusiness(businessData);
+          }
+        } catch (error) {
+          console.error("Ошибка загрузки бизнеса:", error);
+        }
+      };
+      fetchBusinessData();
     }
   }, [businessId]);
 
@@ -97,12 +111,35 @@ function RestaurantMenuPage({ currentLocation, loadingLocation, getLocation }: R
         gap: '1vw',
         overflow: 'hidden'
       }}>
-        {/* Центральная панель - заменена на компонент */}
-        <RecommendedBusinesses 
-          businesses={businesses}
-          loadingBusinesses={loadingBusinesses}
-          currentLocation={currentLocation}
-        />
+        <Box sx={{ 
+          flex: 1,
+          bgcolor: 'white',
+          borderRadius: '1vw',
+          overflow: 'hidden',
+          p: '1vw',
+          background: currentBusiness?.photoURL 
+            ? `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(${currentBusiness.photoURL})`
+            : 'white',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: 'white',
+          position: 'relative'
+        }}>
+          {currentBusiness && (
+            <>
+              <Typography variant="h3" sx={{ zIndex: 1 }}>
+                {currentBusiness.name}
+              </Typography>
+              <Typography variant="h5" sx={{ zIndex: 1 }}>
+                {currentBusiness.description}
+              </Typography>
+            </>
+          )}
+        </Box>
         
         {/* Правая панель*/}
         <Box sx={{ 
@@ -126,7 +163,7 @@ function RestaurantMenuPage({ currentLocation, loadingLocation, getLocation }: R
               alignItems: 'center',
               gap: '1vw'
             }}>
-              <Typography variant="h6" sx={{color: 'black', fontSize: '3vw'}}>Меню</Typography>
+              <Typography variant="h6" sx={{color: 'black', fontSize: '3vw'}}>Забронируйте</Typography>
             </Box>
           </Box>
         </Box>
