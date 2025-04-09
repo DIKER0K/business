@@ -12,6 +12,7 @@ import FeaturedPage from './pages/FeaturedPage'
 import { User } from 'firebase/auth'
 import BusinessDetailsPage from './pages/BusinessDetailsPage'
 import RestaurantNavigationPanel from './components/RestaurantNavigationPanel'
+import SettingBusinessPage from './pages/SettingBusinessPage'
 
 function RootComponent() {
   const [user, setUser] = useState<User | null>(null)
@@ -135,6 +136,17 @@ function RootComponent() {
 
         <Route path="/business/:businessId" element={
           user ? <> <BusinessDetailsPage /> <RestaurantNavigationPanel/> </>: <Navigate to="/" replace />
+        }/>
+
+          <Route path="/settings" element={
+          <>
+            <SettingBusinessPage />
+            <NavigationPanel 
+              activeTab="settings" 
+              setActiveTab={() => {}}
+              user={user}
+            />
+          </>
         }/>
 
         {/* Резервный маршрут */}
