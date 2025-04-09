@@ -164,7 +164,8 @@ function NavigationPanel({
         bgcolor: 'white',
         borderRadius: '2vw',
         maxWidth: '100%',
-        boxSizing: 'border-box'
+        boxSizing: 'border-box',
+        display: location.pathname === '/business' ? 'flex' : 'none',
       }}>
         {/* Первая строка: аватарка, название бизнеса, телефон, почта, описание */}
         <Box sx={{
