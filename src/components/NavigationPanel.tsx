@@ -141,8 +141,8 @@ function NavigationPanel({
         margin: '0 1vw 1vw 1vw'
       }}
       animate={{ 
-        height: location.pathname === '/business' ? '18vw' : '6vw',
-        marginTop: location.pathname === '/business' ? '-12vw' : '0'
+        height: ['/business', '/settings'].includes(location.pathname) ? '18vw' : '6vw',
+        marginTop: ['/business', '/settings'].includes(location.pathname) ? '-12vw' : '0'
       }}
       transition={{ duration: 0.5, ease: "easeInOut" }}
     >
@@ -331,6 +331,7 @@ function NavigationPanel({
           }}>ИП</Typography>
         </Box>
 
+        {/* Изменяем условие отображения только для /business */}
         {location.pathname === '/business' && (
           <Box sx={{ 
             display: 'flex',
