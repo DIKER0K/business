@@ -338,7 +338,6 @@ function NavigationPanel({
             alignItems: 'center',
             backgroundColor: '#1d1d1d',
             borderRadius: '1vw',
-            padding: '0.8vw',
             boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
             transition: 'all 0.2s ease',
             mb: '0.3vw',

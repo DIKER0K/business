@@ -45,7 +45,7 @@ function BusinessPage() {
     <Box sx={{ 
       display: 'flex', 
       flexDirection: 'column', 
-      height: '42vw',
+      height: '41vw',
       bgcolor: '#1d1d1d',
       overflow: 'hidden'
     }}>
