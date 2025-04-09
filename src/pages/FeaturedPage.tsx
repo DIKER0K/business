@@ -187,9 +187,9 @@ function FeaturedPage({ currentLocation, loadingLocation, getLocation }: Feature
                     '&:hover': { bgcolor: '#f5f5f5' }
                   }}
                   onClick={() => {
-                    if (business.type === 'restaurant')  {
+                    if (business.type === 'Кафе ')  {
                       navigate(`/business/${business.id}/restaurant_menu`);
-                    } else if (business.type === 'barber') {
+                    } else if (business.type === 'Парикмахерская') {
                       navigate(`/business/${business.id}/barber_services`);
                     }
                   }}
