@@ -17,16 +17,19 @@ import BarberNavigationPanel from './components/BarberNavigationPanel'
 import BarberMenuPage from './pages/BarberMenuPage'
 import EmployerMenuPage from './pages/EmployerMenuPage'
 import EmployerNavigationPanel from './components/EmployerNavigationPanel'
+import { Box, CircularProgress } from '@mui/material'
 
 function RootComponent() {
   const [user, setUser] = useState<User | null>(null)
   const [currentLocation, setCurrentLocation] = useState("Калининград")
   const [loadingLocation, setLoadingLocation] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const auth = getAuth(app)
   
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user)
+      setIsLoading(false)
     })
     return () => unsubscribe()
   }, [auth])
@@ -78,12 +81,23 @@ function RootComponent() {
     }
   }
 
+  if (isLoading) {
+    return <Box sx={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: '100vh',
+      bgcolor: '#1D1D1D'
+    }}>
+      <CircularProgress color="secondary" />
+    </Box>
+  }
+
   return (
     <Router>
       <Routes>
-        {/* Основной маршрут с проверкой авторизации */}
         <Route path="/" element={
-          user ? <Navigate to="/app" replace /> : <StartPage />
+          !user ? <StartPage /> : <Navigate to="/app" replace />
         }/>
         
         {/* Защищенные маршруты */}
