@@ -18,13 +18,13 @@ interface Business {
   description?: string;
 }
 
-interface EmployerMenuPageProps {
+interface AnalyticPageProps {
   currentLocation: string;
   loadingLocation: boolean;
   getLocation: () => void;
 }
 
-function EmployerMenuPage({ currentLocation, loadingLocation, getLocation }: EmployerMenuPageProps) {
+function AnalyticPage({ currentLocation, loadingLocation, getLocation }: AnalyticPageProps) {
   const [user, setUser] = useState<any>(null);
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [loadingBusinesses, setLoadingBusinesses] = useState(false);
@@ -89,26 +89,25 @@ function EmployerMenuPage({ currentLocation, loadingLocation, getLocation }: Emp
         gap: '1vw',
         overflow: 'hidden'
       }}>
-
-      <Box sx={{ 
-        flex: 1,
-        bgcolor: 'white',
-        borderRadius: '1vw',
-        overflow: 'hidden',
-        p: '1vw',
-        background: 'white',
-        backgroundSize: 'cover',
+        <Box sx={{ 
+      flex: 1,
+      bgcolor: 'white',
+      borderRadius: '1vw',
+      overflow: 'hidden',
+      p: '1vw',
+      background: 'white',
+      backgroundSize: 'cover',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center'
+    }}>
+      <Box sx={{
         display: 'flex',
-        flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center'
+        p: '2vw'
       }}>
-        <Box sx={{
-          display: 'flex',
-          alignItems: 'center',
-          p: '2vw'
-        }}>
-        </Box>
+      </Box>
       </Box>
         
         {/* Правая панель*/}
@@ -121,25 +120,10 @@ function EmployerMenuPage({ currentLocation, loadingLocation, getLocation }: Emp
           flexDirection: 'column',
           overflow: 'hidden'
         }}>
-          <Box sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            flexDirection: 'column',
-            gap: '0.5vw'
-          }}>
-            <Box sx={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '1vw'
-            }}>
-              <Typography variant="h6" sx={{color: 'black', fontSize: '1.5vw'}}>Избранное</Typography>
-            </Box>
-          </Box>
         </Box>
       </Box>
     </Box>
   )
 }
 
-export default EmployerMenuPage;
+export default AnalyticPage;

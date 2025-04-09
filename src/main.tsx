@@ -19,6 +19,7 @@ import EmployerMenuPage from './pages/EmployerMenuPage'
 import EmployerNavigationPanel from './components/EmployerNavigationPanel'
 import { Box, CircularProgress } from '@mui/material'
 import LocationPage from './pages/LocationPage'
+import AnalyticPage from './pages/AnalyticPage'
 
 function RootComponent() {
   const [user, setUser] = useState<User | null>(null)
@@ -233,19 +234,34 @@ function RootComponent() {
         />
 
           <Route path="/employer" 
-                element={
-                  user ? 
-                  <>
-                    <EmployerMenuPage 
-                      currentLocation={currentLocation} 
-                      loadingLocation={loadingLocation} 
-                      getLocation={getLocation}
-                    />
-                    <EmployerNavigationPanel/>
-                  </> 
-                  : <Navigate to="/" replace />
-                }
-              />
+            element={
+             user ? 
+               <>
+                <EmployerMenuPage 
+                  currentLocation={currentLocation} 
+                  loadingLocation={loadingLocation} 
+                  getLocation={getLocation}
+                />
+                  <EmployerNavigationPanel/>
+                </> 
+                : <Navigate to="/" replace />
+              }
+            />
+
+        <Route path="/analytic" 
+            element={
+             user ? 
+               <>
+                <AnalyticPage 
+                  currentLocation={currentLocation} 
+                  loadingLocation={loadingLocation} 
+                  getLocation={getLocation}
+                />
+                  <EmployerNavigationPanel/>
+                </> 
+                : <Navigate to="/" replace />
+              }
+            />
 
         {/* Резервный маршрут */}
         <Route path="*" element={<Navigate to="/" replace />} />

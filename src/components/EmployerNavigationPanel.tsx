@@ -158,7 +158,7 @@ function EmployerNavigationPanel({
 
         <Box 
           component={Link}
-          to="/settings"
+          to="/analytic"
           sx={{ 
             display: 'flex', 
             flexDirection: 'column', 
@@ -171,21 +171,21 @@ function EmployerNavigationPanel({
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            backgroundColor: location.pathname === '/settings' ? '#1d1d1d' : 'transparent',
+            backgroundColor: location.pathname === '/analytic' ? '#1d1d1d' : 'transparent',
             borderRadius: '50%',
-            padding: location.pathname === '/settings' ? '0.8vw' : '0',
-            boxShadow: location.pathname === '/settings' ? '0 2px 8px rgba(0,0,0,0.1)' : 'none',
+            padding: location.pathname === '/analytic' ? '0.8vw' : '0',
+            boxShadow: location.pathname === '/analytic' ? '0 2px 8px rgba(0,0,0,0.1)' : 'none',
             transition: 'all 0.2s ease',
             mb: '0.3vw'
           }}>
             <InsertChartIcon sx={{ 
               fontSize: '1.8vw', 
-              color: location.pathname === '/settings' ? '#fff' : '#1d1d1d'
+              color: location.pathname === '/analytic' ? '#fff' : '#1d1d1d'
             }} />
           </Box>
           <Typography variant="body2" sx={{
             fontSize: '1vw',
-            color: location.pathname === '/settings' ? '#1d1d1d' : '#1d1d1d'
+            color: location.pathname === '/analytic' ? '#1d1d1d' : '#1d1d1d'
           }}>Аналитика</Typography>
         </Box>
 

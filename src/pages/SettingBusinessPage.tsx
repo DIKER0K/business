@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { app } from '../firebase/config';
 import PlaceRoundedIcon from '@mui/icons-material/PlaceRounded';
@@ -8,6 +8,7 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { Avatar, Typography, IconButton, Divider, CircularProgress } from '@mui/material';
 import { getFirestore, collection, getDocs, query, where, limit, getDoc, doc } from "firebase/firestore";
 import RecommendedBusinesses from '../components/RecommendedBusinesses';
+import { motion } from 'framer-motion';
 
 interface Business {
   id: string;
@@ -31,6 +32,7 @@ function SettingBusinessPage({ currentLocation, loadingLocation, getLocation }: 
   const [loadingBusinesses, setLoadingBusinesses] = useState(false);
   const navigate = useNavigate();
   const auth = getAuth(app);
+  const location = useLocation();
 
   // Функция для загрузки бизнесов
   const fetchBusinesses = async () => {
@@ -106,95 +108,49 @@ function SettingBusinessPage({ currentLocation, loadingLocation, getLocation }: 
         gap: '1vw',
         overflow: 'hidden'
       }}>
-        {/* Центральная панель - заменена на компонент */}
-        <RecommendedBusinesses 
-          businesses={businesses}
-          loadingBusinesses={loadingBusinesses}
-          currentLocation={currentLocation}
-        />
+        {/* Центральная панель */}
+        <motion.div
+          style={{
+            flex: 1,
+            backgroundColor: '#fff',
+            borderRadius: '1vw',
+            overflow: 'hidden',
+            padding: '1vw',
+          }}
+          animate={{ 
+            height: location.pathname === '/settings' ? '25.5vw' : '39.5vw'
+          }}
+          transition={{ duration: 0.5, ease: "easeInOut" }}
+          layout
+        >
+        </motion.div>
         
-        {/* Правая панель*/}
-        <Box sx={{ 
-          width: '20vw', 
-          bgcolor: 'white', 
-          borderRadius: '1vw',
-          p: '1.5vw',
-          display: 'flex',
-          flexDirection: 'column',
-          overflow: 'hidden'
-        }}>
+        {/* Правая панель */}
+        <motion.div
+          style={{
+            width: '20vw',
+            backgroundColor: 'white',
+            borderRadius: '1vw',
+            padding: '1.5vw',
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'auto',
+          }}
+          animate={{ 
+            height: location.pathname === '/settings' ? '24.5vw' : '38.5vw'
+          }}
+          transition={{ duration: 0.5, ease: "easeInOut" }}
+          layout
+        >
           <Box sx={{
             display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'flex-start',
             flexDirection: 'column',
-            gap: '0.5vw',
-            p: '0'
+            gap: '1vw'
           }}>
-            <Box sx={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.7vw',
-              width: '100%'
-            }}>
-              <Avatar sx={{width: '4vw', height: '4vw'}} src={user?.photoURL} />
-              <Box sx={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                flexDirection: 'column',
-                alignItems: 'flex-start',
-                }}>
-                <Typography sx={{fontSize: '1.5vw', }} variant="h6">{user?.displayName || 'Без имени'}</Typography>
-                <Typography sx={{fontSize: '1vw'}} variant="h6">{user?.role || 'Пользователь'}</Typography>
-              </Box>
-            </Box>
-            <Box sx={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '1vw',
-              p: '0'
-            }}>
-              <IconButton sx={{color: 'black', p: '0', fontSize: '1vw'}} onClick={getLocation} disabled={loadingLocation}>
-                {loadingLocation ? <CircularProgress size={20} /> : <PlaceRoundedIcon />}
-                <Typography variant="h6" sx={{color: 'black', fontSize: '1vw'}}>{currentLocation}</Typography>
-              </IconButton>
-            </Box>
-            <Box sx={{
-              display: 'flex',
-              alignItems: 'center',
-            }}>
-              <IconButton sx={{color: 'black', p: '0', fontSize: '1vw'}}>
-                <FavoriteBorderIcon />
-              </IconButton>
-              <Typography sx={{fontSize: '1vw'}} variant="h6">{(user?.favorites && user.favorites.length) || 0} мест в избранном</Typography>
-            </Box>
-            <Box sx={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '1vw'
-            }}>
-              <Typography sx={{fontSize: '1vw'}} variant="h6">{(user?.reviews && user.reviews.length) || 0} отзывов</Typography>
-            </Box>
-          </Box>
-          <Divider color='#B7B7B7' sx={{mt: '2vw', mb: '1vw'}} />
-          <Box sx={{
-            display: 'flex',
-            alignItems: 'center',
-            flexDirection: 'column',
-            gap: '0.2vw'
-          }}>
-            <Typography variant="h6">Недавно посещали:</Typography>
-            {user?.recentlyVisited && user.recentlyVisited.length > 0 ? (
-              user.recentlyVisited.map((place: any) => (
-                <Typography variant="h6" key={place.id}>{place.name}</Typography>
-              ))
-            ) : (
-              <Typography variant="h6" >Ничего не посещали</Typography>
-            )}
-          </Box>
         </Box>
-      </Box>
+      </motion.div>
     </Box>
+  </Box>
   )
 }
 
