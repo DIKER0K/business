@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { app } from '../firebase/config';
 import PlaceRoundedIcon from '@mui/icons-material/PlaceRounded';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { Avatar, Typography, IconButton, Divider, CircularProgress } from '@mui/material';
 import { getFirestore, collection, getDocs, query, where, limit, getDoc, doc } from "firebase/firestore";
 import RecommendedBusinesses from '../components/RecommendedBusinesses';
@@ -125,32 +126,35 @@ function FirstPage({ currentLocation, loadingLocation, getLocation }: FirstPageP
           <Box sx={{
             display: 'flex',
             justifyContent: 'center',
-            alignItems: 'center',
+            alignItems: 'flex-start',
             flexDirection: 'column',
-            gap: '0.5vw'
+            gap: '0.5vw',
+            p: '0'
           }}>
             <Box sx={{
               display: 'flex',
               alignItems: 'center',
-              gap: '1vw'
+              gap: '0.7vw',
+              width: '100%'
             }}>
-              <Avatar src={user?.photoURL} />
+              <Avatar sx={{width: '4vw', height: '4vw'}} src={user?.photoURL} />
               <Box sx={{
                 display: 'flex',
+                flexWrap: 'wrap',
                 flexDirection: 'column',
-                alignItems: 'center',
-                gap: '0.1vw'
+                alignItems: 'flex-start',
                 }}>
-                <Typography variant="h6">{user?.displayName || 'Без имени'}</Typography>
-                <Typography variant="h6">{user?.role || 'Пользователь'}</Typography>
+                <Typography sx={{fontSize: '1.5vw', }} variant="h6">{user?.displayName || 'Без имени'}</Typography>
+                <Typography sx={{fontSize: '1vw'}} variant="h6">{user?.role || 'Пользователь'}</Typography>
               </Box>
             </Box>
             <Box sx={{
               display: 'flex',
               alignItems: 'center',
-              gap: '1vw'
+              gap: '1vw',
+              p: '0'
             }}>
-              <IconButton onClick={getLocation} disabled={loadingLocation}>
+              <IconButton sx={{color: 'black', p: '0'}} onClick={getLocation} disabled={loadingLocation}>
                 {loadingLocation ? <CircularProgress size={20} /> : <PlaceRoundedIcon />}
                 <Typography variant="h6" sx={{color: 'black'}}>{currentLocation}</Typography>
               </IconButton>
@@ -158,8 +162,10 @@ function FirstPage({ currentLocation, loadingLocation, getLocation }: FirstPageP
             <Box sx={{
               display: 'flex',
               alignItems: 'center',
-              gap: '1vw'
             }}>
+              <IconButton sx={{color: 'black', p: '0'}}>
+                <FavoriteBorderIcon />
+              </IconButton>
               <Typography variant="h6">{(user?.favorites && user.favorites.length) || 0} мест в избранном</Typography>
             </Box>
             <Box sx={{
