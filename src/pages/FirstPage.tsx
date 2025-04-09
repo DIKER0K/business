@@ -154,26 +154,26 @@ function FirstPage({ currentLocation, loadingLocation, getLocation }: FirstPageP
               gap: '1vw',
               p: '0'
             }}>
-              <IconButton sx={{color: 'black', p: '0'}} onClick={getLocation} disabled={loadingLocation}>
+              <IconButton sx={{color: 'black', p: '0', fontSize: '1vw'}} onClick={getLocation} disabled={loadingLocation}>
                 {loadingLocation ? <CircularProgress size={20} /> : <PlaceRoundedIcon />}
-                <Typography variant="h6" sx={{color: 'black'}}>{currentLocation}</Typography>
+                <Typography variant="h6" sx={{color: 'black', fontSize: '1vw'}}>{currentLocation}</Typography>
               </IconButton>
             </Box>
             <Box sx={{
               display: 'flex',
               alignItems: 'center',
             }}>
-              <IconButton sx={{color: 'black', p: '0'}}>
+              <IconButton sx={{color: 'black', p: '0', fontSize: '1vw'}}>
                 <FavoriteBorderIcon />
               </IconButton>
-              <Typography variant="h6">{(user?.favorites && user.favorites.length) || 0} мест в избранном</Typography>
+              <Typography sx={{fontSize: '1vw'}} variant="h6">{(user?.favorites && user.favorites.length) || 0} мест в избранном</Typography>
             </Box>
             <Box sx={{
               display: 'flex',
               alignItems: 'center',
               gap: '1vw'
             }}>
-              <Typography variant="h6">{(user?.reviews && user.reviews.length) || 0} отзывов</Typography>
+              <Typography sx={{fontSize: '1vw'}} variant="h6">{(user?.reviews && user.reviews.length) || 0} отзывов</Typography>
             </Box>
           </Box>
           <Divider color='#B7B7B7' sx={{mt: '2vw', mb: '1vw'}} />
