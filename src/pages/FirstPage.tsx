@@ -4,10 +4,19 @@ import { useNavigate } from 'react-router-dom';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { app } from '../firebase/config';
 import PlaceRoundedIcon from '@mui/icons-material/PlaceRounded';
-import { Avatar, Typography, IconButton, Divider, Grid, CircularProgress } from '@mui/material';
-import { getFirestore, collection, getDocs, query, where, limit } from "firebase/firestore";
-import StarOutlineRoundedIcon from '@mui/icons-material/StarOutlineRounded';
-import StarRateRoundedIcon from '@mui/icons-material/StarRateRounded';
+import { Avatar, Typography, IconButton, Divider, CircularProgress } from '@mui/material';
+import { getFirestore, collection, getDocs, query, where, limit, getDoc, doc } from "firebase/firestore";
+import RecommendedBusinesses from '../components/RecommendedBusinesses';
+
+interface Business {
+  id: string;
+  name: string;
+  type?: string;
+  photoURL?: string;
+  rating?: number;
+  city?: string;
+  description?: string;
+}
 
 interface FirstPageProps {
   currentLocation: string;
@@ -21,15 +30,6 @@ function FirstPage({ currentLocation, loadingLocation, getLocation }: FirstPageP
   const [loadingBusinesses, setLoadingBusinesses] = useState(false);
   const navigate = useNavigate();
   const auth = getAuth(app);
-
-  // Добавьте эту вспомогательную функцию в начало компонента
-  const capitalizeEachWord = (str: string) => {
-    if (!str) return '';
-    return str.toLowerCase()
-      .split(' ')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
-  };
 
   // Функция для загрузки бизнесов
   const fetchBusinesses = async () => {
@@ -60,12 +60,28 @@ function FirstPage({ currentLocation, loadingLocation, getLocation }: FirstPageP
   };
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      if (!user) {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser) {
+        // Получаем данные пользователя из Firestore
+        try {
+          const db = getFirestore();
+          const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            setUser({...currentUser, ...userData});
+          } else {
+            setUser(currentUser);
+          }
+        } catch (error) {
+          console.error("Ошибка при получении данных пользователя:", error);
+          setUser(currentUser);
+        }
+      } else {
+        setUser(null);
         navigate('/');
       }
     });
+    
     return () => unsubscribe();
   }, [auth, navigate]);
 
@@ -89,78 +105,13 @@ function FirstPage({ currentLocation, loadingLocation, getLocation }: FirstPageP
         gap: '1vw',
         overflow: 'hidden'
       }}>
-        {/* Центральная панель */}
-        <Box sx={{ 
-          flex: 1,
-          bgcolor: 'white',
-          borderRadius: '1vw',
-          overflow: 'hidden',
-          p: '1vw',
-          background: 'linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(background_1.png) no-repeat center center',
-          backgroundSize: 'cover',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}>
-          <Box sx={{
-            display: 'flex',
-            alignItems: 'center',
-            p: '2vw'
-          }}>
-            <Typography variant="h6" sx={{color: 'white', fontSize: '2vw'}}>Возможно, вам понравится:</Typography>
-          </Box>
-          <Grid container spacing={2} sx={{display: 'flex', justifyContent: 'space-around', mt: '-2vw'}}>
-            {loadingBusinesses ? (
-              <Grid item xs={12}>
-                <CircularProgress />
-              </Grid>
-            ) : businesses.map((business) => (
-              <Grid item xs={12} md={6} lg={3} key={business.id}>
-                <Box sx={{
-                  bgcolor: 'white',
-                  borderRadius: '1vw',
-                  overflow: 'hidden',
-                  alignItems: 'center',
-                  display: 'flex',
-                  background: 'transparent',
-                  p: '3vw',
-                  gap: '1vw'
-                }}>
-                  <Avatar sx={{width: '7vw', height: '7vw'}} src={business?.photoURL} />
-                  <Box sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '0.5vw',
-                    alignItems: 'left'
-                  }}>
-                    <Typography variant="h6" sx={{
-                      fontSize: '2vw',
-                      color: 'white'
-                    }}>
-                      {capitalizeEachWord(business.name)}
-                    </Typography>
-                    <Typography variant="body2" sx={{
-                      fontSize: '1.5vw',
-                      color: 'white'
-                    }}>
-                      {capitalizeEachWord(business.type) || 'Не указано'}
-                    </Typography>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 1 }}>
-                    {Array.from({ length: 5 }).map((_, index) => (
-                      index < Math.round(business.rating || 0) ? (
-                        <StarRateRoundedIcon key={index} sx={{ color: '#ffc107', fontSize: '1.2rem' }} />
-                      ) : (
-                        <StarOutlineRoundedIcon key={index} sx={{ color: '#ddd', fontSize: '1.2rem' }} />
-                      )
-                    ))}
-                    </Box>
-                  </Box>
-                </Box>
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
+        {/* Центральная панель - заменена на компонент */}
+        <RecommendedBusinesses 
+          businesses={businesses}
+          loadingBusinesses={loadingBusinesses}
+          currentLocation={currentLocation}
+        />
+        
         {/* Правая панель*/}
         <Box sx={{ 
           width: '20vw', 

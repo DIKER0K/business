@@ -1,60 +1,45 @@
 import { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { app } from '../firebase/config';
 import PlaceRoundedIcon from '@mui/icons-material/PlaceRounded';
 import { Avatar, Typography, IconButton, Divider, Grid, CircularProgress } from '@mui/material';
-import { getFirestore, collection, getDocs, query, where, limit } from "firebase/firestore";
+import { getFirestore, collection, getDocs, query, where, limit, doc, getDoc } from "firebase/firestore";
+import StarOutlineRoundedIcon from '@mui/icons-material/StarOutlineRounded';
+import StarRateRoundedIcon from '@mui/icons-material/StarRateRounded';
+import RecommendedBusinesses from '../components/RecommendedBusinesses';
 
-function FeaturedPage() {
+// Добавьте интерфейс Business в начало файла
+interface Business {
+  id: string;
+  name: string;
+  type?: string;
+  photoURL?: string;
+  rating?: number;
+  city?: string;
+  description?: string;
+}
+
+interface FeaturedPageProps {
+  currentLocation: string;
+  loadingLocation: boolean;
+  getLocation: () => void;
+}
+
+function FeaturedPage({ currentLocation, loadingLocation, getLocation }: FeaturedPageProps) {
   const [user, setUser] = useState<any>(null);
-  const [location, setLocation] = useState("Калининград");
-  const [loadingLocation, setLoadingLocation] = useState(false);
   const [businesses, setBusinesses] = useState<Business[]>([]);
+  const [favoriteBusinesses, setFavoriteBusinesses] = useState<Business[]>([]);
   const [loadingBusinesses, setLoadingBusinesses] = useState(false);
+  const [loadingFavorites, setLoadingFavorites] = useState(false);
   const navigate = useNavigate();
+  const { businessId } = useParams();
   const auth = getAuth(app);
-
-  // Функция для определения местоположения
-  const getLocation = () => {
-    setLoadingLocation(true);
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          try {
-            const { latitude, longitude } = position.coords;
-            const response = await fetch(
-              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10&accept-language=ru`
-            );
-            const data = await response.json();
-            const city = data.address.city || 
-                        data.address.town || 
-                        data.address.village || 
-                        "Калининград";
-            setLocation(city);
-          } catch (error) {
-            console.error("Ошибка определения:", error);
-            setLocation("Калининград");
-          } finally {
-            setLoadingLocation(false);
-          }
-        },
-        (error) => {
-          console.error("Ошибка геолокации:", error);
-          setLocation("Калининград");
-          setLoadingLocation(false);
-        }
-      );
-    } else {
-      setLocation("Калининград");
-      setLoadingLocation(false);
-    }
-  };
 
   // Функция для загрузки бизнесов
   const fetchBusinesses = async () => {
-    if (!location) return;
+    if (!currentLocation) return;
     
     setLoadingBusinesses(true);
     try {
@@ -62,8 +47,8 @@ function FeaturedPage() {
       const businessesRef = collection(db, "businesses");
       const q = query(
         businessesRef,
-        where("city", "==", location),
-        limit(6)
+        where("city", "==", currentLocation),
+        limit(4)
       );
       
       const querySnapshot = await getDocs(q);
@@ -80,10 +65,54 @@ function FeaturedPage() {
     }
   };
 
+  // Добавляем функцию загрузки избранного
+  const fetchFavorites = async (user: any) => {
+    if (!user?.favorites?.length) {
+      setFavoriteBusinesses([]);
+      return;
+    }
+    
+    setLoadingFavorites(true);
+    try {
+      const db = getFirestore();
+      const favorites: Business[] = [];
+      
+      for (const businessId of user.favorites) {
+        const docRef = doc(db, "businesses", businessId);
+        const docSnap = await getDoc(docRef);
+        
+        if (docSnap.exists()) {
+          favorites.push({
+            id: docSnap.id,
+            ...docSnap.data()
+          } as Business);
+        }
+      }
+      
+      setFavoriteBusinesses(favorites);
+    } catch (error) {
+      console.error("Ошибка загрузки избранного:", error);
+    } finally {
+      setLoadingFavorites(false);
+    }
+  };
+
+  // Обновляем useEffect для пользователя
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      if (!user) {
+      if (user) {
+        // Загружаем данные пользователя с избранным
+        const fetchUserData = async () => {
+          const db = getFirestore();
+          const userDoc = await getDoc(doc(db, "users", user.uid));
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            setUser({...user, ...userData});
+            fetchFavorites({...user, ...userData});
+          }
+        };
+        fetchUserData();
+      } else {
         navigate('/');
       }
     });
@@ -92,7 +121,12 @@ function FeaturedPage() {
 
   useEffect(() => {
     fetchBusinesses();
-  }, [location]);
+  }, [currentLocation]);
+
+  // Обновляем функцию обработки клика
+  const handleOpenBusinessDetails = (business: Business) => {
+    navigate(`/business/${business.id}`);
+  };
 
   return (
     <Box sx={{ 
@@ -110,42 +144,13 @@ function FeaturedPage() {
         gap: '1vw',
         overflow: 'hidden'
       }}>
-        {/* Центральная панель */}
-        <Box sx={{ 
-          flex: 1,
-          bgcolor: 'white',
-          borderRadius: '1vw',
-          overflow: 'hidden',
-          p: '1vw'
-        }}>
-          <Box sx={{
-            display: 'flex',
-            alignItems: 'center',
-          }}>
-            <Typography variant="h6">Возможно, вам понравится хуй в рот:</Typography>
-          </Box>
-          <Grid container spacing={2}>
-            {loadingBusinesses ? (
-              <Grid item xs={12}>
-                <CircularProgress />
-              </Grid>
-            ) : businesses.map((business) => (
-              <Grid item xs={12} md={6} lg={4} key={business.id}>
-                <Box sx={{
-                  bgcolor: 'white',
-                  borderRadius: '1vw',
-                  overflow: 'hidden',
-                  p: '1vw'
-                }}>
-                  <Avatar src={business?.photoURL} />
-                  <Typography variant="h6">{business.name}</Typography>
-                  <Typography variant="body2">{business.description}</Typography>
-                  <Typography variant="h6">{business.rating || 0} / 5</Typography>
-                </Box>
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
+        {/* Центральная панель - заменена на компонент */}
+        <RecommendedBusinesses 
+          businesses={businesses}
+          loadingBusinesses={loadingBusinesses}
+          currentLocation={currentLocation}
+        />
+        
         {/* Правая панель*/}
         <Box sx={{ 
           width: '20vw', 
@@ -163,67 +168,45 @@ function FeaturedPage() {
             flexDirection: 'column',
             gap: '0.5vw'
           }}>
-            <Box sx={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '1vw'
-            }}>
-              <Avatar src={user?.photoURL} />
-              <Box sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '0.1vw'
-                }}>
-                <Typography variant="h6">{user?.displayName || 'Без имени'}</Typography>
-                <Typography variant="h6">{user?.role || 'Пользователь'}</Typography>
-              </Box>
-            </Box>
-            <Box sx={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '1vw'
-            }}>
-              <IconButton onClick={getLocation}>
-                    <PlaceRoundedIcon />
-                    <Typography variant="h6" sx={{color: 'black'}}>{location}</Typography>
-              </IconButton>
-            </Box>
-            <Box sx={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '1vw'
-            }}>
-              <Typography variant="h6">{(user?.favorites && user.favorites.length) || 0} мест в избранном</Typography>
-            </Box>
-            <Box sx={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '1vw'
-            }}>
-              <Typography variant="h6">{(user?.reviews && user.reviews.length) || 0} отзывов</Typography>
-            </Box>
-          </Box>
-          <Divider color='#B7B7B7' sx={{mt: '2vw', mb: '2vw'}} />
-          <Box sx={{
-            display: 'flex',
-            alignItems: 'center',
-            flexDirection: 'column',
-            gap: '1vw'
-          }}>
-            <Typography variant="h6">Недавно посещали:</Typography>
-            {user?.recentlyVisited && user.recentlyVisited.length > 0 ? (
-              user.recentlyVisited.map((place: any) => (
-                <Typography variant="h6" key={place.id}>{place.name}</Typography>
+            <Typography variant="h6" sx={{color: 'black', fontSize: '1vw', mb: 2}}>
+              Избранное
+            </Typography>
+            
+            {loadingFavorites ? (
+              <CircularProgress size={24} />
+            ) : favoriteBusinesses.length > 0 ? (
+              favoriteBusinesses.map((business) => (
+                <Box 
+                  key={business.id}
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1,
+                    p: 1,
+                    cursor: 'pointer',
+                    '&:hover': { bgcolor: '#f5f5f5' }
+                  }}
+                  onClick={() => navigate(`/business/${business.id}`)}
+                >
+                  <Avatar 
+                    src={business.photoURL} 
+                    sx={{ width: 40, height: 40 }}
+                  />
+                  <Typography variant="body2">
+                    {business.name}
+                  </Typography>
+                </Box>
               ))
             ) : (
-              <Typography variant="h6">Ничего не посещали</Typography>
+              <Typography variant="body2" color="text.secondary">
+                Нет избранных мест
+              </Typography>
             )}
           </Box>
         </Box>
       </Box>
     </Box>
-  )
+  );
 }
 
-export default FeaturedPage
+export default FeaturedPage;

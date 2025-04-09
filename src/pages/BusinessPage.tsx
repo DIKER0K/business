@@ -3,9 +3,17 @@ import Box from '@mui/material/Box';
 import { useNavigate } from 'react-router-dom';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { app } from '../firebase/config';
-import PlaceRoundedIcon from '@mui/icons-material/PlaceRounded';
-import { Avatar, Typography, IconButton, Divider, Grid, CircularProgress } from '@mui/material';
 import { getFirestore, collection, getDocs, query, where, limit } from "firebase/firestore";
+
+interface Business {
+  id: string;
+  name: string;
+  type?: string;
+  photoURL?: string;
+  rating?: number;
+  city?: string;
+  description?: string;
+}
 
 function BusinessPage() {
   const [user, setUser] = useState<any>(null);
@@ -15,42 +23,6 @@ function BusinessPage() {
   const [loadingBusinesses, setLoadingBusinesses] = useState(false);
   const navigate = useNavigate();
   const auth = getAuth(app);
-
-  // Функция для определения местоположения
-  const getLocation = () => {
-    setLoadingLocation(true);
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          try {
-            const { latitude, longitude } = position.coords;
-            const response = await fetch(
-              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10&accept-language=ru`
-            );
-            const data = await response.json();
-            const city = data.address.city || 
-                        data.address.town || 
-                        data.address.village || 
-                        "Калининград";
-            setLocation(city);
-          } catch (error) {
-            console.error("Ошибка определения:", error);
-            setLocation("Калининград");
-          } finally {
-            setLoadingLocation(false);
-          }
-        },
-        (error) => {
-          console.error("Ошибка геолокации:", error);
-          setLocation("Калининград");
-          setLoadingLocation(false);
-        }
-      );
-    } else {
-      setLocation("Калининград");
-      setLoadingLocation(false);
-    }
-  };
 
   // Функция для загрузки бизнесов
   const fetchBusinesses = async () => {
