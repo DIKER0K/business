@@ -47,87 +47,82 @@ function BusinessPage() {
             flexDirection: 'column',
             marginLeft: '3vw',
           }}>
-          <Typography sx={{
-            color: 'white',
-            fontSize: '3.5vw',
-            fontWeight: 'bold',
-            textAlign: 'center',
-            marginBottom: '1vw',
-            display: 'flex',
-            justifyContent: 'flex-start',
-            alignItems: 'flex-start',
-            textAlign: 'left',
-            flexDirection: 'column'
-          }}>
-            Продвигайте свой бизнес
-            <Typography sx={{
-            color: 'white',
-            fontSize: '3.5vw',
-            fontWeight: 'bold',
-            textAlign: 'center',
-            marginBottom: '1vw',
-            display: 'flex',
-            justifyContent: 'flex-start',
-            alignItems: 'flex-start',
-            textAlign: 'left',
-            flexDirection: 'column'
-          }}>
-            вместе с QWERTY TOWN!
-          </Typography>
-          </Typography>
-          <Typography sx={{
-            color: 'white',
-            fontSize: '2vw',
-            fontWeight: 'bold',
-            textAlign: 'center',
-            marginBottom: '1vw',
-            display: 'flex',
-            alignItems: 'flex-start',
-            textAlign: 'left',
-            flexDirection: 'column'
-          }}>
-            Продвигайте свой бизнес благодаря 
-            <Typography sx={{
-            color: 'white',
-            fontSize: '2vw',
-            fontWeight: 'bold',
-            textAlign: 'center',
-            marginBottom: '1vw',
-            display: 'flex',
-            alignItems: 'flex-start',
-            textAlign: 'left',
-            flexDirection: 'column',
-          }}>
-            большой команде QWERTY TOWN!
-          </Typography>
-          </Typography>
+            {/* Основной заголовок */}
+            <Typography 
+              component="div"
+              sx={{
+                color: 'white',
+                fontSize: '3.5vw',
+                fontWeight: 'bold',
+                textAlign: 'left',
+                mb: '1vw'
+              }}
+            >
+              Продвигайте свой бизнес
+              <Typography 
+                component="div"
+                sx={{
+                  color: 'white',
+                  fontSize: '2.5vw',
+                  fontWeight: 'bold',
+                  textAlign: 'left',
+                  mt: '0.5vw'
+                }}
+              >
+                вместе с QWERTY TOWN!
+              </Typography>
+            </Typography>
 
-          <Typography sx={{
-            color: 'white',
-            fontSize: '2vw',
-            fontWeight: 'bold',
-            textAlign: 'center',
-            marginBottom: '1vw',
-            display: 'flex',
-            alignItems: 'flex-start',
-            textAlign: 'left',
-            flexDirection: 'column',
-          }}>
-            Вы делаете - продукт
-            <Typography sx={{
-            color: 'white',
-            fontSize: '2vw',
-            fontWeight: 'bold',
-            textAlign: 'center',
-            marginBottom: '1vw',
-            display: 'flex',
-            alignItems: 'flex-start',
-            textAlign: 'left',
-            flexDirection: 'column',
-          }}>
-            Мы делаем - продажи
-          </Typography>
-          </Typography>
+            {/* Блок описания */}
+            <Box component="div" sx={{ position: 'relative', zIndex: 1 }}>
+              <Typography
+                component="div"
+                sx={{
+                  color: 'white',
+                  fontSize: '2vw',
+                  fontWeight: 'bold',
+                  textAlign: 'left',
+                  mb: '1vw'
+                }}
+              >
+                Продвигайте свой бизнес благодаря
+                <Typography 
+                  component="span" 
+                  sx={{
+                    display: 'block',
+                    fontSize: '2vw',
+                    fontWeight: 'bold',
+                    mt: '0.5vw'
+                  }}
+                >
+                  большой команде QWERTY TOWN!
+                </Typography>
+              </Typography>
+
+              <Typography
+                component="div"
+                sx={{
+                  color: 'white',
+                  fontSize: '2vw',
+                  fontWeight: 'bold',
+                  textAlign: 'left',
+                  mt: '2vw'
+                }}
+              >
+                Вы делаете - продукт
+                <Typography
+                  component="span"
+                  sx={{
+                    display: 'block',
+                    fontSize: '2vw',
+                    fontWeight: 'bold',
+                    mt: '0.5vw'
+                  }}
+                >
+                  Мы делаем - продажи
+                </Typography>
+              </Typography>
+            </Box>
           </Box>
 
           <Box sx={{

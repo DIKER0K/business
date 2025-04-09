@@ -10,6 +10,7 @@ import FirstPage from './pages/FirstPage'
 import BusinessPage from './pages/BusinessPage'
 import FeaturedPage from './pages/FeaturedPage'
 import { User } from 'firebase/auth'
+import SettingBusinessPage from './pages/SettingBusinessPage'
 
 function RootComponent() {
   const [user, setUser] = useState<User | null>(null)
@@ -104,6 +105,17 @@ function RootComponent() {
             <FeaturedPage />
             <NavigationPanel 
               activeTab="featured" 
+              setActiveTab={() => {}}
+              user={user}
+            />
+          </>
+        }/>
+
+        <Route path="/settings" element={
+          <>
+            <SettingBusinessPage />
+            <NavigationPanel 
+              activeTab="settings" 
               setActiveTab={() => {}}
               user={user}
             />
