@@ -1,15 +1,45 @@
 import { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { app } from '../firebase/config';
-import PlaceRoundedIcon from '@mui/icons-material/PlaceRounded';
-import { Avatar, Typography, IconButton, Divider, Grid, CircularProgress } from '@mui/material';
-import { getFirestore, collection, getDocs, query, where, limit } from "firebase/firestore";
+import { Avatar, Typography, Grid, CircularProgress } from '@mui/material';
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { motion } from 'framer-motion';
+import { db } from '../firebase/config';
 
 function BusinessPage() {
   const location = useLocation();
+  const auth = getAuth(app);
+  const [userBusinesses, setUserBusinesses] = useState<any[]>([]);
+  const [loadingBusinesses, setLoadingBusinesses] = useState(true);
+
+  // Загрузка бизнесов пользователя
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        try {
+          const q = query(
+            collection(db, "businesses"),
+            where("ownerId", "==", user.uid)
+          );
+          const querySnapshot = await getDocs(q);
+          const businesses = querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          }));
+          setUserBusinesses(businesses);
+        } catch (error) {
+          console.error("Error loading businesses:", error);
+        } finally {
+          setLoadingBusinesses(false);
+        }
+      } else {
+        setLoadingBusinesses(false);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
 
   return (
     <Box sx={{ 
@@ -156,7 +186,7 @@ function BusinessPage() {
             padding: '1.5vw',
             display: 'flex',
             flexDirection: 'column',
-            overflow: 'hidden',
+            overflow: 'auto',
           }}
           animate={{ 
             height: location.pathname === '/business' ? '24.5vw' : '38.5vw'
@@ -171,6 +201,50 @@ function BusinessPage() {
             flexDirection: 'column',
             gap: '0.5vw'
           }}>
+            <Typography variant="h6" sx={{
+              fontSize: '1.5vw',
+              fontWeight: 'bold',
+              mb: '1vw'
+            }}>
+              Ваши бизнесы
+            </Typography>
+            
+            {loadingBusinesses ? (
+              <CircularProgress />
+            ) : userBusinesses.length > 0 ? (
+              <Grid container spacing={2}>
+                {userBusinesses.map((business) => (
+                  <Grid item xs={12} key={business.id}>
+                    <Box sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '1vw',
+                      p: '1vw',
+                      borderRadius: '0.5vw',
+                      cursor: 'pointer',
+                      '&:hover': { bgcolor: '#f5f5f5' }
+                    }}>
+                      <Avatar 
+                        src={business.photoURL} 
+                        sx={{ width: '3vw', height: '3vw' }}
+                      />
+                      <Box>
+                        <Typography sx={{ fontSize: '1.2vw', fontWeight: 500 }}>
+                          {business.name}
+                        </Typography>
+                        <Typography sx={{ fontSize: '0.9vw', color: '#666' }}>
+                          {business.type}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Grid>
+                ))}
+              </Grid>
+            ) : (
+              <Typography sx={{ fontSize: '1vw', color: '#666' }}>
+                У вас пока нет бизнесов
+              </Typography>
+            )}
           </Box>
         </motion.div>
       </Box>

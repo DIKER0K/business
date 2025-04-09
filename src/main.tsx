@@ -105,7 +105,7 @@ function RootComponent() {
         <Route path="/business" element={
           user ? (
             <>
-              <BusinessPage />
+              <BusinessPage/>
               <NavigationPanel 
                 activeTab="business" 
                 setActiveTab={() => {}}

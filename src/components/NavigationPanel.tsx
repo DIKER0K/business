@@ -124,6 +124,12 @@ function NavigationPanel({
             cursor: 'pointer',
             textDecoration: 'none'
           }}
+          onClick={(e) => {
+            if (location.pathname === '/business') {
+              e.preventDefault();
+              window.history.back();
+            }
+          }}
         >
           <Box sx={{ 
             display: 'flex',
