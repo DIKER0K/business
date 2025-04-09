@@ -109,11 +109,21 @@ function SettingBusinessPage({ currentLocation, loadingLocation, getLocation }: 
         overflow: 'hidden'
       }}>
         {/* Центральная панель - заменена на компонент */}
-        <RecommendedBusinesses 
-          businesses={businesses}
-          loadingBusinesses={loadingBusinesses}
-          currentLocation={currentLocation}
-        />
+        <Box sx={{ 
+      flex: 1,
+      bgcolor: 'white',
+      borderRadius: '1vw',
+      overflow: 'hidden',
+      p: '1vw',
+      background: 'linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(background_1.png) no-repeat center center',
+      backgroundSize: 'cover',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: '25.5vw',
+    }}>
+    </Box>
         
         {/* Правая панель*/}
         <Box sx={{ 
@@ -123,7 +133,8 @@ function SettingBusinessPage({ currentLocation, loadingLocation, getLocation }: 
           p: '1.5vw',
           display: 'flex',
           flexDirection: 'column',
-          overflow: 'hidden'
+          overflow: 'hidden',
+          height: '24.5vw',
         }}>
           <Box sx={{
             display: 'flex',
