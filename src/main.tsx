@@ -15,6 +15,8 @@ import SettingBusinessPage from './pages/SettingBusinessPage'
 import RestaurantMenuPage from './pages/RestaurantMenuPage'
 import BarberNavigationPanel from './components/BarberNavigationPanel'
 import BarberMenuPage from './pages/BarberMenuPage'
+import EmployerMenuPage from './pages/EmployerMenuPage'
+import EmployerNavigationPanel from './components/EmployerNavigationPanel'
 
 function RootComponent() {
   const [user, setUser] = useState<User | null>(null)
@@ -138,7 +140,11 @@ function RootComponent() {
 
         <Route path="/settings" element={
           <>
-            <SettingBusinessPage />
+            <SettingBusinessPage 
+              currentLocation={currentLocation}
+              loadingLocation={loadingLocation}
+              getLocation={getLocation}
+            />
             <NavigationPanel 
               activeTab="settings" 
               setActiveTab={() => {}}
@@ -163,16 +169,31 @@ function RootComponent() {
           }
         />
 
-              <Route path="/business/:businessId/barber_services" 
+        <Route path="/business/:businessId/barber_services" 
+          element={
+            user ? 
+            <>
+              <BarberMenuPage 
+                currentLocation={currentLocation} 
+                loadingLocation={loadingLocation} 
+                getLocation={getLocation}
+              />
+              <BarberNavigationPanel/>
+            </> 
+            : <Navigate to="/" replace />
+          }
+        />
+
+          <Route path="/employer" 
                 element={
                   user ? 
                   <>
-                    <BarberMenuPage 
+                    <EmployerMenuPage 
                       currentLocation={currentLocation} 
                       loadingLocation={loadingLocation} 
                       getLocation={getLocation}
                     />
-                    <BarberNavigationPanel/>
+                    <EmployerNavigationPanel/>
                   </> 
                   : <Navigate to="/" replace />
                 }
