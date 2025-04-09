@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Box from '@mui/material/Box';
-import { Typography, IconButton, createSvgIcon, CircularProgress, TextField, Button, MenuItem } from '@mui/material';
+import { Typography, IconButton, createSvgIcon, CircularProgress, TextField, Button, MenuItem, Switch, styled, Avatar } from '@mui/material';
 import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
 import TelegramIcon from '@mui/icons-material/Telegram';
 import InstagramIcon from '@mui/icons-material/Instagram';
@@ -10,7 +10,9 @@ import { Link, useLocation } from 'react-router-dom';
 import { User, updatePassword, updatePhoneNumber, signOut } from 'firebase/auth';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { auth, db } from '../firebase/config';
+import ArrowDropDownOutlinedIcon from '@mui/icons-material/ArrowDropDownOutlined';
+import RemoveRedEyeRoundedIcon from '@mui/icons-material/RemoveRedEyeRounded';
+import { db } from '../firebase/config';
 import { collection, addDoc } from 'firebase/firestore';
 import LocationOnRoundedIcon from '@mui/icons-material/LocationOnRounded';
 import BookmarkRoundedIcon from '@mui/icons-material/BookmarkRounded';
@@ -28,6 +30,45 @@ interface NavigationPanelProps {
   getLocation: () => void;
   user: User;
 }
+
+const DarkModeSwitch = styled(Switch)(({ theme }) => ({
+  width: 62,
+  height: 34,
+  padding: 7,
+  '& .MuiSwitch-switchBase': {
+    margin: 1,
+    padding: 0,
+    transform: 'translateX(0.3vw)',
+    '&.Mui-checked': {
+      color: '#fff',
+      transform: 'translateX(1.1vw)',
+      '& .MuiSwitch-thumb': {
+        backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 20 20"><path fill="${encodeURIComponent(
+          '#fff',
+        )}" d="M9.305 1.667V3.75h1.389V1.667h-1.39zm-4.707 1.95l-.982.982L5.09 6.072l.982-.982-1.473-1.473zm10.802 0L13.927 5.09l.982.982 1.473-1.473-.982-.982zM10 5.139a4.872 4.872 0 00-4.862 4.86A4.872 4.872 0 0010 14.862 4.872 4.872 0 0014.86 10 4.872 4.872 0 0010 5.139zm0 1.389A3.462 3.462 0 0113.471 10a3.462 3.462 0 01-3.473 3.472A3.462 3.462 0 016.527 10 3.462 3.462 0 0110 6.528zM1.665 9.305v1.39h2.083v-1.39H1.666zm14.583 0v1.39h2.084v-1.39h-2.084zM5.09 13.928L3.616 15.4l.982.982 1.473-1.473-.982-.982zm9.82 0l-.982.982 1.473 1.473.982-.982-1.473-1.473zM9.305 16.25v2.083h1.389V16.25h-1.39z"/></svg>')`,
+      },
+      '& + .MuiSwitch-track': {
+        opacity: 1,
+        backgroundColor: theme.palette.mode === 'dark' ? '#535353' : '#535353',
+      },
+    },
+  },
+  '& .MuiSwitch-thumb': {
+    backgroundColor: theme.palette.mode === 'dark' ? '#535353' : '#2F2F2F',
+    width: 32,
+    height: 32,
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'center',
+    backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 20 20"><path fill="${encodeURIComponent(
+      '#fff',
+    )}" d="M4.2 2.5l-.7 1.8-1.8.7 1.8.7.7 1.8.6-1.8L6.7 5l-1.9-.7-.6-1.8zm15 8.3a6.7 6.7 0 11-6.6-6.6 5.8 5.8 0 006.6 6.6z"/></svg>')`,
+  },
+  '& .MuiSwitch-track': {
+    opacity: 1,
+    backgroundColor: theme.palette.mode === 'dark' ? '#535353' : '#2F2F2F',
+    borderRadius: 20 / 2,
+  },
+}));
 
 function NavigationPanel({ 
   currentLocation,
@@ -409,7 +450,7 @@ function NavigationPanel({
         {/* Блок геолокации */}
         <Box sx={{
           position: 'absolute',
-          right: '0vw',
+          right: '-10vw',
           top: '50%',
           transform: 'translate(-50%, -50%)',
           display: 'flex',
@@ -432,6 +473,19 @@ function NavigationPanel({
             <Typography sx={{ color: 'black', fontSize: '0.9vw', mr: '0.5vw' }}>
               {loadingLocation ? 'Определение...' : (currentLocation || 'Местоположение не определено')}
             </Typography>
+            <Box sx={{display: 'flex', alignItems: 'center'}}>
+                <DarkModeSwitch />
+                <IconButton aria-label="delete">
+                    <RemoveRedEyeRoundedIcon sx={{color:'black'}} />
+                </IconButton>
+            </Box>
+            <Box sx={{display:'flex', alignItems:'center'}}>
+                <Typography sx={{color: 'black'}}>Язык</Typography>
+                <IconButton>
+                    <ArrowDropDownOutlinedIcon sx={{color: 'black'}} />
+                </IconButton>
+                <Avatar sx={{width: '1.8vw', height: '1.8vw', color: 'black'}} src="/broken-image.jpg" />
+            </Box>
           </Box>
         </Box>
       </Box>

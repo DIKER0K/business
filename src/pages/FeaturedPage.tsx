@@ -5,10 +5,12 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { app } from '../firebase/config';
 import PlaceRoundedIcon from '@mui/icons-material/PlaceRounded';
 import { Avatar, Typography, IconButton, Divider, Grid, CircularProgress } from '@mui/material';
-import { getFirestore, collection, getDocs, query, where, limit, doc, getDoc } from "firebase/firestore";
+import { getFirestore, collection, getDocs, query, where, limit, doc, getDoc, updateDoc } from "firebase/firestore";
 import StarOutlineRoundedIcon from '@mui/icons-material/StarOutlineRounded';
 import StarRateRoundedIcon from '@mui/icons-material/StarRateRounded';
 import RecommendedBusinesses from '../components/RecommendedBusinesses';
+import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
+import FavoriteBorderRoundedIcon from '@mui/icons-material/FavoriteBorderRounded';
 
 // Добавьте интерфейс Business в начало файла
 interface Business {
@@ -97,6 +99,35 @@ function FeaturedPage({ currentLocation, loadingLocation, getLocation }: Feature
     }
   };
 
+  // Добавим функцию для обновления избранного
+  const toggleFavorite = async (businessId: string) => {
+    if (!user) return;
+
+    try {
+      const db = getFirestore();
+      const userRef = doc(db, "users", user.uid);
+      const currentFavorites = user.favorites || [];
+      
+      // Проверяем, есть ли уже бизнес в избранном
+      const isFavorite = currentFavorites.includes(businessId);
+      const newFavorites = isFavorite 
+        ? currentFavorites.filter(id => id !== businessId)
+        : [...currentFavorites, businessId];
+
+      // Обновляем данные пользователя
+      await updateDoc(userRef, {
+        favorites: newFavorites
+      });
+
+      // Обновляем локальное состояние
+      setUser(prev => ({...prev, favorites: newFavorites}));
+      fetchFavorites({...user, favorites: newFavorites});
+
+    } catch (error) {
+      console.error("Ошибка обновления избранного:", error);
+    }
+  };
+
   // Обновляем useEffect для пользователя
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -151,22 +182,22 @@ function FeaturedPage({ currentLocation, loadingLocation, getLocation }: Feature
           width: '20vw',
           bgcolor: 'white', 
           borderRadius: '1vw',
-          p: '1.5vw',
+          p: '1vw',
           display: 'flex',
           flexDirection: 'column',
+          alignItems: 'center',
           overflow: 'hidden'
         }}>
+          <Typography variant="h6" sx={{color: 'black', fontSize: '1.5vw', mb: 2}}>
+              Избранное
+            </Typography>
           <Box sx={{
             display: 'flex',
             justifyContent: 'center',
-            alignItems: 'center',
+            alignItems: 'left',
             flexDirection: 'column',
             gap: '0.5vw'
           }}>
-            <Typography variant="h6" sx={{color: 'black', fontSize: '1vw', mb: 2}}>
-              Избранное
-            </Typography>
-            
             {loadingFavorites ? (
               <CircularProgress size={24} />
             ) : favoriteBusinesses.length > 0 ? (
@@ -193,9 +224,33 @@ function FeaturedPage({ currentLocation, loadingLocation, getLocation }: Feature
                     src={business.photoURL} 
                     sx={{ width: 40, height: 40 }}
                   />
-                  <Typography variant="body2">
-                    {business.name}
-                  </Typography>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'left' }}>
+                    <Typography variant="body2">
+                      {business.name}
+                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.2, mt: 1 }}>
+                      {Array.from({ length: 5 }).map((_, index) => (
+                        index < Math.round(business.rating || 0) ? (
+                          <StarRateRoundedIcon key={index} sx={{ color: '#ffc107', fontSize: '1.2rem' }} />
+                        ) : (
+                          <StarOutlineRoundedIcon key={index} sx={{ color: '#black', fontSize: '1.2rem' }} />
+                        )
+                      ))}
+                    </Box>
+                  </Box>
+                  <IconButton 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleFavorite(business.id);
+                    }}
+                    sx={{ ml: 'auto' }}
+                  >
+                    {user?.favorites?.includes(business.id) ? (
+                      <FavoriteRoundedIcon sx={{ color: '#black', fontSize: '1.2rem' }} />
+                    ) : (
+                      <FavoriteBorderRoundedIcon sx={{ color: '#gray', fontSize: '1.2rem' }} />
+                    )}
+                  </IconButton>
                 </Box>
               ))
             ) : (
