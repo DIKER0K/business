@@ -144,8 +144,8 @@ function BarberNavigationPanel({
               getLocation();
             }} disabled={loadingLocation} size="small">
               {loadingLocation ? 
-                <CircularProgress size={24} sx={{color:'white'}} /> : 
-                <PlaceRoundedIcon sx={{color:'white'}}/>
+                <CircularProgress size={24} sx={{color:'black'}} /> : 
+                <PlaceRoundedIcon sx={{color:'black'}}/>
               }
             </IconButton>
             <Typography sx={{ color: 'black', fontSize: '0.9vw', mr: '0.5vw' }}>
