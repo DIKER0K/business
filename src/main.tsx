@@ -17,6 +17,7 @@ import BarberMenuPage from './pages/BarberMenuPage'
 import EmployerMenuPage from './pages/EmployerMenuPage'
 import EmployerNavigationPanel from './components/EmployerNavigationPanel'
 import { Box, CircularProgress } from '@mui/material'
+import LocationPage from './pages/LocationPage'
 import AnalyticPage from './pages/AnalyticPage'
 import { User, updatePassword, updatePhoneNumber, signOut } from 'firebase/auth';
 import { auth } from '../firebase/config';
@@ -110,9 +111,12 @@ function RootComponent() {
                 getLocation={getLocation}
               />
               <NavigationPanel 
-                activeTab="app" 
-                setActiveTab={() => {}}
-                user={user}
+                activeTab="app"
+                setActiveTab={(tab) => navigate(`/${tab}`)}
+                user={user!}
+                currentLocation={currentLocation}
+                loadingLocation={loadingLocation}
+                getLocation={getLocation}
               />
             </> 
             : <Navigate to="/" replace />
@@ -133,13 +137,17 @@ function RootComponent() {
             />
           </>
         }/>
-        
-        <Route path="/business" element={
+
+        <Route path="/location" element={
           user ? (
             <>
-              <BusinessPage/>
+              <LocationPage
+                currentLocation={currentLocation}
+                loadingLocation={loadingLocation}
+                getLocation={getLocation}
+              />
               <NavigationPanel 
-                activeTab="business" 
+                activeTab="location" 
                 setActiveTab={() => {}}
                 user={user}
                 currentLocation={currentLocation}
@@ -149,6 +157,20 @@ function RootComponent() {
             </>
           ) : <Navigate to="/" replace />
         }/>
+        
+        <Route path="/business" element={
+            <>
+              <BusinessPage/>
+              <NavigationPanel 
+                activeTab="business" 
+                setActiveTab={(tab) => navigate(`/${tab}`)}
+                user={user!}
+                currentLocation={currentLocation}
+                loadingLocation={loadingLocation}
+                getLocation={getLocation}
+              />
+            </>
+          }/>
 
         <Route path="/featured" element={
           <>
@@ -177,7 +199,13 @@ function RootComponent() {
                 loadingLocation={loadingLocation} 
                 getLocation={getLocation}
               />
-              <RestaurantNavigationPanel/>
+              <RestaurantNavigationPanel
+                activeTab="restaurant"
+                setActiveTab={() => {}}
+                currentLocation={currentLocation}
+                loadingLocation={loadingLocation}
+                getLocation={getLocation}
+              />
             </> 
             : <Navigate to="/" replace />
           }
@@ -192,7 +220,13 @@ function RootComponent() {
                 loadingLocation={loadingLocation} 
                 getLocation={getLocation}
               />
-              <BarberNavigationPanel/>
+              <BarberNavigationPanel
+                activeTab="barber"
+                setActiveTab={() => {}}
+                currentLocation={currentLocation}
+                loadingLocation={loadingLocation}
+                getLocation={getLocation}
+              />
             </> 
             : <Navigate to="/" replace />
           }
