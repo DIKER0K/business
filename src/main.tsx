@@ -9,7 +9,6 @@ import StartPage from './pages/StartPage'
 import FirstPage from './pages/FirstPage'
 import BusinessPage from './pages/BusinessPage'
 import FeaturedPage from './pages/FeaturedPage'
-import { User } from 'firebase/auth'
 import RestaurantNavigationPanel from './components/RestaurantNavigationPanel'
 import SettingBusinessPage from './pages/SettingBusinessPage'
 import RestaurantMenuPage from './pages/RestaurantMenuPage'
@@ -19,6 +18,8 @@ import EmployerMenuPage from './pages/EmployerMenuPage'
 import EmployerNavigationPanel from './components/EmployerNavigationPanel'
 import { Box, CircularProgress } from '@mui/material'
 import AnalyticPage from './pages/AnalyticPage'
+import { User, updatePassword, updatePhoneNumber, signOut } from 'firebase/auth';
+import { auth } from '../firebase/config';
 
 function RootComponent() {
   const [user, setUser] = useState<User | null>(null)
@@ -97,26 +98,40 @@ function RootComponent() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={
-          !user ? <StartPage /> : <Navigate to="/app" replace />
-        }/>
+        <Route path="/" element={<StartPage />} />
         
-        {/* Защищенные маршруты */}
-        <Route path="/app" element={
-          user ? (
+        <Route path="/app" 
+          element={
+            user ? 
             <>
               <FirstPage 
-                currentLocation={currentLocation}
-                loadingLocation={loadingLocation}
+                currentLocation={currentLocation} 
+                loadingLocation={loadingLocation} 
                 getLocation={getLocation}
               />
               <NavigationPanel 
-                currentLocation={currentLocation}
-                loadingLocation={loadingLocation}
-                getLocation={getLocation}
+                activeTab="app" 
+                setActiveTab={() => {}}
+                user={user}
               />
-            </>
-          ) : <Navigate to="/" replace />
+            </> 
+            : <Navigate to="/" replace />
+          }
+        />
+
+        <Route path="/settings" element={
+          <>
+            <SettingBusinessPage 
+              currentLocation={currentLocation}
+              loadingLocation={loadingLocation}
+              getLocation={getLocation}
+            />
+            <NavigationPanel 
+              activeTab="settings" 
+              setActiveTab={() => {}}
+              user={user}
+            />
+          </>
         }/>
         
         <Route path="/business" element={
@@ -152,22 +167,6 @@ function RootComponent() {
             />
           </>
         }/>
-
-        <Route path="/settings" element={
-          <>
-            <SettingBusinessPage 
-              currentLocation={currentLocation}
-              loadingLocation={loadingLocation}
-              getLocation={getLocation}
-            />
-            <NavigationPanel 
-              activeTab="settings" 
-              setActiveTab={() => {}}
-              user={user}
-            />
-          </>
-        }/>
-        
 
         <Route path="/business/:businessId/restaurant_menu" 
           element={

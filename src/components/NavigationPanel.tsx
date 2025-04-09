@@ -7,10 +7,10 @@ import InstagramIcon from '@mui/icons-material/Instagram';
 import { motion } from 'framer-motion';
 import PlaceRoundedIcon from '@mui/icons-material/PlaceRounded';
 import { Link, useLocation } from 'react-router-dom';
-import { User } from 'firebase/auth';
+import { User, updatePassword, updatePhoneNumber, signOut } from 'firebase/auth';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { db } from '../firebase/config';
+import { auth, db } from '../firebase/config';
 import { collection, addDoc } from 'firebase/firestore';
 import LocationOnRoundedIcon from '@mui/icons-material/LocationOnRounded';
 import BookmarkRoundedIcon from '@mui/icons-material/BookmarkRounded';
@@ -50,6 +50,9 @@ function NavigationPanel({
   const [hasBusiness, setHasBusiness] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState('');
   const [generatingAvatar, setGeneratingAvatar] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState(user.phoneNumber || '');
+  const [newPassword, setNewPassword] = useState('');
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
 
   const generateAIAvatar = async () => {
     try {
@@ -125,6 +128,37 @@ function NavigationPanel({
       alert('Ошибка при добавлении бизнеса');
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Функция сохранения изменений
+  const handleSaveChanges = async () => {
+    try {
+      const updates = [];
+      
+      // Обновление номера телефона
+      if (phoneNumber !== user.phoneNumber) {
+        // Требуется реализация верификации номера
+        // await updatePhoneNumber(user, phoneNumber);
+        updates.push('номер телефона');
+      }
+
+      // Обновление пароля
+      if (newPassword) {
+        await updatePassword(user, newPassword);
+        setNewPassword('');
+        updates.push('пароль');
+      }
+
+      if (updates.length > 0) {
+        alert(`Успешно обновлено: ${updates.join(', ')}`);
+      } else {
+        alert('Нет изменений для сохранения');
+      }
+      
+    } catch (error) {
+      console.error('Ошибка сохранения:', error);
+      alert(`Ошибка: ${error instanceof Error ? error.message : 'Неизвестная ошибка'}`);
     }
   };
 
@@ -346,29 +380,29 @@ function NavigationPanel({
             position: 'absolute',
             right: '50vw'
           }}>
-          <Button
-            variant="contained"
-            sx={{
-              bgcolor: '#1d1d1d',
-              color: 'white',
-              borderRadius: '0.5vw',
-              padding: '0.5vw 2vw',
-              fontSize: '0.9vw',
-              textTransform: 'none',
-              height: '3vw',
-              '&:hover': {
-                bgcolor: '#333'
-              },
-              '&:disabled': {
-                bgcolor: '#666',
-                color: '#999'
-              }
-            }}
-            onClick={handleSubmit}
-            disabled={loading}
-          >
-            {loading ? 'Добавляем...' : 'Добавить бизнес'}
-          </Button>
+            <Button
+              variant="contained"
+              sx={{
+                bgcolor: '#1d1d1d',
+                color: 'white',
+                borderRadius: '0.5vw',
+                padding: '0.5vw 2vw',
+                fontSize: '0.9vw',
+                textTransform: 'none',
+                height: '3vw',
+                '&:hover': {
+                  bgcolor: '#333'
+                },
+                '&:disabled': {
+                  bgcolor: '#666',
+                  color: '#999'
+                }
+              }}
+              onClick={handleSubmit}
+              disabled={loading}
+            >
+              {loading ? 'Добавляем...' : 'Добавить бизнес'}
+            </Button>
           </Box>
         )}
 
@@ -427,7 +461,7 @@ function NavigationPanel({
             width: '5vw', 
             height: '5vw', 
             borderRadius: '50%', 
-            bgcolor: '#f5f5f5',
+            bgcolor: '#a5a5a5',
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
@@ -815,6 +849,194 @@ function NavigationPanel({
               }}
             />
           </Box>
+        </Box>
+      </Box>
+
+      <Box sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '1.5vw',
+        width: '100%',
+        padding: '0vw 2vw',
+        bgcolor: 'white',
+        borderRadius: '2vw',
+        maxWidth: '100%',
+        boxSizing: 'border-box',
+        marginTop: '2vw',
+        display: location.pathname === '/settings' ? 'flex' : 'none',
+      }}>
+        {/* Строка с настройками */}
+        <Box sx={{
+          display: 'grid',
+          gridTemplateColumns: '5vw 1fr 1fr 1fr 1fr',
+          gap: '1.5vw',
+          alignItems: 'center',
+          width: '100%',
+          position: 'relative'
+        }}>
+          {/* Аватарка */}
+          <Box sx={{ 
+            width: '5vw', 
+            height: '5vw', 
+            borderRadius: '50%', 
+            bgcolor: '#c7c7c7',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            cursor: 'pointer',
+            position: 'relative'
+          }}>
+            <input
+              accept="image/*"
+              style={{ display: 'none' }}
+              id="settings-avatar-upload"
+              type="file"
+            />
+            <label htmlFor="settings-avatar-upload">
+              <IconButton component="span">
+                <CameraAltIcon sx={{ fontSize: '1.8vw' }} />
+              </IconButton>
+            </label>
+          </Box>
+
+          {/* Смена телефона */}
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5vw' }}>
+            <Typography variant="caption" sx={{ fontSize: '0.8vw', color: '#666' }}>
+              Номер телефона
+            </Typography>
+            <TextField
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              variant="outlined"
+              size="small"
+              InputProps={{
+                sx: {
+                  borderRadius: '2vw',
+                  fontSize: '0.9vw',
+                  height: '2.8vw',
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderColor: '#1d1d1d',
+                    borderWidth: '0.2vw'
+                  },
+                  '&:hover .MuiOutlinedInput-notchedOutline': {
+                    borderColor: '#1d1d1d',
+                    borderWidth: '0.2vw'
+                  },
+                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                    borderColor: '#1d1d1d',
+                    borderWidth: '0.2vw'
+                  }
+                }
+              }}
+            />
+          </Box>
+
+          {/* Смена пароля */}
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5vw' }}>
+            <Typography variant="caption" sx={{ fontSize: '0.8vw', color: '#1d1d1d' }}>
+              Новый пароль
+            </Typography>
+            <TextField
+              type="password"
+              placeholder="••••••••"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              variant="outlined"
+              size="small"
+              InputProps={{
+                sx: {
+                  borderRadius: '2vw',
+                  fontSize: '0.9vw',
+                  height: '2.8vw',
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderColor: '#1d1d1d',
+                    borderWidth: '0.2vw'
+                  },
+                  '&:hover .MuiOutlinedInput-notchedOutline': {
+                    borderColor: '#1d1d1d',
+                    borderWidth: '0.2vw'
+                  },
+                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                    borderColor: '#1d1d1d',
+                    borderWidth: '0.2vw'
+                  }
+                }
+              }}
+            />
+          </Box>
+
+          {/* Уведомления */}
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5vw' }}>
+            <Typography variant="caption" sx={{ fontSize: '0.8vw', color: '#1d1d1d' }}>
+              Уведомления
+            </Typography>
+            <Button 
+              onClick={() => setNotificationsEnabled(!notificationsEnabled)}
+              variant="outlined" 
+              sx={{
+                borderColor: '#1d1d1d',
+                color: '#1d1d1d',
+                '&:hover': {
+                  borderColor: '#333',
+                  backgroundColor: 'rgba(29,29,29,0.1)'
+                },
+                borderRadius: '2vw',
+                fontSize: '0.9vw',
+                height: '2.8vw',
+                textTransform: 'none',
+                borderWidth: '0.2vw'
+              }}
+            >
+              {notificationsEnabled ? 'Выключить' : 'Включить'}
+            </Button>
+          </Box>
+
+          {/* Выход */}
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5vw' }}>
+            <Typography variant="caption" sx={{ fontSize: '0.8vw', color: '#1d1d1d' }}>
+              Аккаунт
+            </Typography>
+            <Button 
+              variant="contained"
+              onClick={() => signOut(auth).then(() => window.location.reload())}
+              sx={{
+                bgcolor: '#1d1d1d',
+                color: 'white',
+                borderRadius: '2vw',
+                fontSize: '0.9vw',
+                height: '2.8vw',
+                textTransform: 'none',
+                '&:hover': {
+                  bgcolor: '#333'
+                }
+              }}
+            >
+              Выйти
+            </Button>
+          </Box>
+
+          {/* Кнопка сохранения */}
+          <Button
+            variant="contained"
+            onClick={handleSaveChanges}
+            sx={{
+              position: 'absolute',
+              bottom: '-4vw',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              bgcolor: '#1d1d1d',
+              color: 'white',
+              borderRadius: '2vw',
+              padding: '0.8vw 3vw',
+              fontSize: '0.9vw',
+              textTransform: 'none',
+              '&:hover': {
+                bgcolor: '#333'
+              }
+            }}
+          >
+            Сохранить изменения
+          </Button>
         </Box>
       </Box>
     </motion.div>
