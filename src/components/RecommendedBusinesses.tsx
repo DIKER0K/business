@@ -74,6 +74,7 @@ const RecommendedBusinesses = ({
               p: '3vw',
               gap: '1vw',
               position: 'relative',
+              cursor: 'pointer'
             }}
             onClick={() => {
               if (business.type === 'Кафе')  {
