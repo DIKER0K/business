@@ -24,13 +24,14 @@ interface NavigationPanelProps {
   currentLocation: string;
   loadingLocation: boolean;
   getLocation: () => void;
-  user?: User;
+  user: User;
 }
 
 function NavigationPanel({ 
   currentLocation,
   loadingLocation,
   getLocation,
+  user,
 }: NavigationPanelProps) {
   const location = useLocation();
 
@@ -40,16 +41,55 @@ function NavigationPanel({
   const [email, setEmail] = useState('');
   const [description, setDescription] = useState('');
   const [website, setWebsite] = useState('');
-  const [businessType, setBusinessType] = useState('cafe');
+  const [businessType, setBusinessType] = useState('Кафе');
   const [city, setCity] = useState('');
   const [address, setAddress] = useState('');
   const [loading, setLoading] = useState(false);
+  const [hasBusiness, setHasBusiness] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState('');
+  const [generatingAvatar, setGeneratingAvatar] = useState(false);
+
+  const generateAIAvatar = async () => {
+    try {
+      setGeneratingAvatar(true);
+      const response = await fetch('https://api.deepai.org/api/text2img', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'api-key': '85223f82-aec0-453b-8dff-35f0439b778e' // Замените на действительный ключ
+        },
+        body: JSON.stringify({
+          text: `Professional business logo for ${businessName || 'a company'}, minimalist style`,
+        })
+      });
+      
+      const data = await response.json();
+      if(data.output_url) {
+        setAvatarUrl(data.output_url);
+      }
+    } catch (error) {
+      console.error('Ошибка генерации аватара:', error);
+      alert('Ошибка генерации: проверьте API ключ и интернет-соединение');
+    } finally {
+      setGeneratingAvatar(false);
+    }
+  };
 
   // Обработчик отправки формы
   const handleSubmit = async () => {
+    if (!user) {
+      alert('Требуется авторизация');
+      return;
+    }
+    
+    if (hasBusiness) {
+      alert('Вы можете добавить только один бизнес');
+      return;
+    }
+
     try {
       setLoading(true);
-      // Собираем данные с гарантированным значением location
+      // Добавляем uid пользователя в данные бизнеса
       const businessData = {
         name: businessName,
         phone,
@@ -61,6 +101,7 @@ function NavigationPanel({
         address,
         createdAt: new Date(),
         updatedAt: new Date(),
+        ownerId: user.uid, // Явно используем uid авторизованного пользователя
       };
 
       // Добавляем документ в коллекцию businesses
@@ -321,21 +362,55 @@ function NavigationPanel({
             justifyContent: 'center',
             alignItems: 'center',
             cursor: 'pointer',
-            flexShrink: 0
+            flexShrink: 0,
+            overflow: 'hidden',
+            position: 'relative'
           }}>
-            <input
-              accept="image/*"
-              style={{ display: 'none' }}
-              id="avatar-upload"
-              type="file"
-            />
-            <label htmlFor="avatar-upload">
-              <IconButton component="span">
-                <CameraAltIcon sx={{ fontSize: '1.8vw' }} />
-              </IconButton>
-            </label>
+            {avatarUrl ? (
+              <img 
+                src={avatarUrl} 
+                alt="Business avatar" 
+                style={{ 
+                  width: '100%', 
+                  height: '100%', 
+                  objectFit: 'cover' 
+                }}
+              />
+            ) : (
+              <>
+                <input
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                  id="avatar-upload"
+                  type="file"
+                />
+                <label htmlFor="avatar-upload">
+                  <IconButton component="span">
+                    <CameraAltIcon sx={{ fontSize: '1.8vw' }} />
+                  </IconButton>
+                </label>
+              </>
+            )}
           </Box>
-          
+          {/* <Button 
+              variant="contained" 
+              color="primary"
+              onClick={generateAIAvatar}
+              disabled={generatingAvatar}
+              size="small"
+              sx={{
+                position: 'absolute',
+                width: '10vw',
+                height: '2.8vw',
+                fontSize: '0.9vw',
+                borderRadius: '2vw',
+                bgcolor: '#1d1d1d',
+                color: 'white',
+                
+              }}
+            >
+              {generatingAvatar ? 'Генерация...' : 'Генерация ИИ'}
+            </Button> */}
           {/* Название бизнеса */}
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5vw', width: '100%' }}>
             <Typography variant="caption" sx={{ fontSize: '0.8vw', color: '#666' }}>

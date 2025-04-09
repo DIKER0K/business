@@ -123,11 +123,6 @@ function FeaturedPage({ currentLocation, loadingLocation, getLocation }: Feature
     fetchBusinesses();
   }, [currentLocation]);
 
-  // Обновляем функцию обработки клика
-  const handleOpenBusinessDetails = (business: Business) => {
-    navigate(`/business/${business.id}`);
-  };
-
   return (
     <Box sx={{ 
       display: 'flex', 
@@ -187,7 +182,7 @@ function FeaturedPage({ currentLocation, loadingLocation, getLocation }: Feature
                     '&:hover': { bgcolor: '#f5f5f5' }
                   }}
                   onClick={() => {
-                    if (business.type === 'Кафе ')  {
+                    if (business.type === 'Кафе')  {
                       navigate(`/business/${business.id}/restaurant_menu`);
                     } else if (business.type === 'Парикмахерская') {
                       navigate(`/business/${business.id}/barber_services`);
