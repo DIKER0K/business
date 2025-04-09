@@ -3,11 +3,8 @@ import Box from '@mui/material/Box';
 import { useNavigate } from 'react-router-dom';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { app } from '../firebase/config';
-import PlaceRoundedIcon from '@mui/icons-material/PlaceRounded';
-import { Avatar, Typography, IconButton, Divider, Grid, CircularProgress } from '@mui/material';
+import { Typography} from '@mui/material';
 import { getFirestore, collection, getDocs, query, where, limit } from "firebase/firestore";
-import StarOutlineRoundedIcon from '@mui/icons-material/StarOutlineRounded';
-import StarRateRoundedIcon from '@mui/icons-material/StarRateRounded';
 import RecommendedBusinesses from '../components/RecommendedBusinesses';
 
 // Добавьте интерфейс Business в начало файла

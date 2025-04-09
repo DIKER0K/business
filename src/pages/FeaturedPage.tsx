@@ -153,7 +153,7 @@ function FeaturedPage({ currentLocation, loadingLocation, getLocation }: Feature
         
         {/* Правая панель*/}
         <Box sx={{ 
-          width: '20vw', 
+          width: '20vw',
           bgcolor: 'white', 
           borderRadius: '1vw',
           p: '1.5vw',
@@ -186,7 +186,13 @@ function FeaturedPage({ currentLocation, loadingLocation, getLocation }: Feature
                     cursor: 'pointer',
                     '&:hover': { bgcolor: '#f5f5f5' }
                   }}
-                  onClick={() => navigate(`/business/${business.id}`)}
+                  onClick={() => {
+                    if (business.type === 'restaurant')  {
+                      navigate(`/business/${business.id}/restaurant_menu`);
+                    } else if (business.type === 'barber') {
+                      navigate(`/business/${business.id}/barber_services`);
+                    }
+                  }}
                 >
                   <Avatar 
                     src={business.photoURL} 

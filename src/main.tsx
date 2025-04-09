@@ -10,9 +10,11 @@ import FirstPage from './pages/FirstPage'
 import BusinessPage from './pages/BusinessPage'
 import FeaturedPage from './pages/FeaturedPage'
 import { User } from 'firebase/auth'
-import BusinessDetailsPage from './pages/BusinessDetailsPage'
 import RestaurantNavigationPanel from './components/RestaurantNavigationPanel'
 import SettingBusinessPage from './pages/SettingBusinessPage'
+import RestaurantMenuPage from './pages/RestaurantMenuPage'
+import BarberNavigationPanel from './components/BarberNavigationPanel'
+import BarberMenuPage from './pages/BarberMenuPage'
 
 function RootComponent() {
   const [user, setUser] = useState<User | null>(null)
@@ -134,11 +136,7 @@ function RootComponent() {
           </>
         }/>
 
-        <Route path="/business/:businessId" element={
-          user ? <> <BusinessDetailsPage /> <RestaurantNavigationPanel/> </>: <Navigate to="/" replace />
-        }/>
-
-          <Route path="/settings" element={
+        <Route path="/settings" element={
           <>
             <SettingBusinessPage />
             <NavigationPanel 
@@ -148,6 +146,37 @@ function RootComponent() {
             />
           </>
         }/>
+        
+
+        <Route path="/business/:businessId/restaurant_menu" 
+          element={
+            user ? 
+            <>
+              <RestaurantMenuPage 
+                currentLocation={currentLocation} 
+                loadingLocation={loadingLocation} 
+                getLocation={getLocation}
+              />
+              <RestaurantNavigationPanel/>
+            </> 
+            : <Navigate to="/" replace />
+          }
+        />
+
+              <Route path="/business/:businessId/barber_services" 
+                element={
+                  user ? 
+                  <>
+                    <BarberMenuPage 
+                      currentLocation={currentLocation} 
+                      loadingLocation={loadingLocation} 
+                      getLocation={getLocation}
+                    />
+                    <BarberNavigationPanel/>
+                  </> 
+                  : <Navigate to="/" replace />
+                }
+              />
 
         {/* Резервный маршрут */}
         <Route path="*" element={<Navigate to="/" replace />} />

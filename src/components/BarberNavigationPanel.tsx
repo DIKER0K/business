@@ -15,7 +15,7 @@ const VkIcon = createSvgIcon(
   'VkIcon'
 );
 
-interface RestaurantNavigationPanelProps {
+interface BarberNavigationPanelProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
   currentLocation: string;
@@ -24,11 +24,11 @@ interface RestaurantNavigationPanelProps {
   user?: User;
 }
 
-function RestaurantNavigationPanel({ 
+function BarberNavigationPanel({ 
   currentLocation,
   loadingLocation,
   getLocation,
-}: RestaurantNavigationPanelProps) {
+}: BarberNavigationPanelProps) {
   const location = useLocation();
   const { businessId } = useParams();
 
@@ -60,7 +60,7 @@ function RestaurantNavigationPanel({
         {/* Блок навигации */}
         <Box 
           component={Link}
-          to={`/business/${businessId}/restaurant_menu`}
+          to={`/business/${businessId}/barber_services`}
           sx={{ 
             display: 'flex', 
             flexDirection: 'column', 
@@ -73,22 +73,22 @@ function RestaurantNavigationPanel({
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            backgroundColor: location.pathname === `/business/${businessId}/restaurant_menu` ? '#1d1d1d' : 'transparent',
+            backgroundColor: location.pathname === `/business/${businessId}/barber_services` ? '#1d1d1d' : 'transparent',
             borderRadius: '50%',
-            padding: location.pathname === `/business/${businessId}/restaurant_menu` ? '0.8vw' : '0',
-            boxShadow: location.pathname === `/business/${businessId}/restaurant_menu` ? '0 2px 8px rgba(0,0,0,0.1)' : 'none',
+            padding: location.pathname === `/business/${businessId}/barber_services` ? '0.8vw' : '0',
+            boxShadow: location.pathname === `/business/${businessId}/barber_services` ? '0 2px 8px rgba(0,0,0,0.1)' : 'none',
             transition: 'all 0.2s ease',
             mb: '0.3vw'
           }}>
             <LunchDiningRoundedIcon sx={{ 
               fontSize: '1.8vw', 
-              color: location.pathname === `/business/${businessId}/restaurant_menu` ? '#fff' : '#1d1d1d'
+              color: location.pathname === `/business/${businessId}/barber_services` ? '#fff' : '#1d1d1d'
             }} />
           </Box>
           <Typography variant="body2" sx={{
             fontSize: '1vw',
-            color: location.pathname === `/business/${businessId}/restaurant_menu` ? '#1d1d1d' : '#1d1d1d'
-          }}>Меню</Typography>
+            color: location.pathname === `/business/${businessId}/barber_services` ? '#1d1d1d' : '#1d1d1d'
+          }}>Услуги</Typography>
         </Box>
 
         <Box 
@@ -158,4 +158,4 @@ function RestaurantNavigationPanel({
   );
 }
 
-export default RestaurantNavigationPanel;
+export default BarberNavigationPanel;

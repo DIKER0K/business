@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { app } from '../firebase/config';
 import { Typography} from '@mui/material';
@@ -18,13 +18,14 @@ interface Business {
   description?: string;
 }
 
-interface RestaurantDetailsPageProps {
+interface RestaurantMenuPageProps {
   currentLocation: string;
   loadingLocation: boolean;
   getLocation: () => void;
 }
 
-function RestaurantDetailsPage({ currentLocation, loadingLocation, getLocation }: RestaurantDetailsPageProps) {
+function RestaurantMenuPage({ currentLocation, loadingLocation, getLocation }: RestaurantMenuPageProps) {
+  const { businessId } = useParams<{ businessId: string }>();
   const [user, setUser] = useState<any>(null);
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [loadingBusinesses, setLoadingBusinesses] = useState(false);
@@ -73,6 +74,13 @@ function RestaurantDetailsPage({ currentLocation, loadingLocation, getLocation }
     fetchBusinesses();
   }, [currentLocation]);
 
+  useEffect(() => {
+    if (businessId) {
+      // Добавьте здесь загрузку данных конкретного бизнеса
+      console.log('Loaded business ID:', businessId);
+    }
+  }, [businessId]);
+
   return (
     <Box sx={{ 
       display: 'flex', 
@@ -118,7 +126,7 @@ function RestaurantDetailsPage({ currentLocation, loadingLocation, getLocation }
               alignItems: 'center',
               gap: '1vw'
             }}>
-              <Typography variant="h6" sx={{color: 'black', fontSize: '1.5vw'}}>Избранное</Typography>
+              <Typography variant="h6" sx={{color: 'black', fontSize: '3vw'}}>Меню</Typography>
             </Box>
           </Box>
         </Box>
@@ -127,4 +135,4 @@ function RestaurantDetailsPage({ currentLocation, loadingLocation, getLocation }
   )
 }
 
-export default RestaurantDetailsPage;
+export default RestaurantMenuPage;

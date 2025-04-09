@@ -1,6 +1,7 @@
 import { Box, Typography, Grid, CircularProgress, Avatar } from '@mui/material';
 import StarOutlineRoundedIcon from '@mui/icons-material/StarOutlineRounded';
 import StarRateRoundedIcon from '@mui/icons-material/StarRateRounded';
+import { useNavigate } from 'react-router-dom';
 
 interface Business {
   id: string;
@@ -32,7 +33,7 @@ const RecommendedBusinesses = ({
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
   };
-
+  const navigate = useNavigate();
   return (
     <Box sx={{ 
       flex: 1,
@@ -73,7 +74,15 @@ const RecommendedBusinesses = ({
               p: '3vw',
               gap: '1vw',
               position: 'relative',
-            }}>
+            }}
+            onClick={() => {
+              if (business.type === 'Кафе')  {
+                navigate(`/business/${business.id}/restaurant_menu`);
+              } else if (business.type === 'Парикмахерская') {
+                  navigate(`/business/${business.id}/barber_services`);
+                }
+              }}
+            >
               <Avatar sx={{width: '7vw', height: '7vw', zIndex: 2}} src={business?.photoURL} />
               <Box sx={{
                 display: 'flex',
