@@ -494,165 +494,7 @@ function StartPage() {
         <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '-28vw'}}>
             <img className='logo' src="logo.svg" alt="logo" />
         </Box>
-        {/* <Box sx={{
-            display: 'flex', 
-            alignItems: 'center', 
-            flexDirection: 'column', 
-            justifyContent: 'center', 
-            marginTop: '-28vw',
-            gap: '1.1vw',
-            width: '15.6vw'
-        }}>            
-            <Typography variant="h6" sx={{color: 'white', mt: 4, mb: 2}}>
-                Создание бизнеса
-            </Typography>
-            
-            <TextField 
-                id="name" 
-                label="Название" 
-                variant="standard" 
-                fullWidth
-                value={businessName}
-                onChange={(e) => setBusinessName(e.target.value)}
-                InputLabelProps={{
-                    style: { color: 'rgba(255, 255, 255, 0.7)' }
-                }}
-                InputProps={{
-                    style: { color: 'white' },
-                    sx: {
-                        '&:before': { borderBottomColor: 'rgba(255, 255, 255, 0.3)' },
-                        '&:hover:not(.Mui-disabled):before': { borderBottomColor: 'rgba(255, 255, 255, 0.5)' },
-                        '&.Mui-focused:after': { borderBottomColor: 'primary.main' }
-                    }
-                }}
-            />
-            
-            <TextField 
-                id="description" 
-                label="Описание" 
-                variant="standard" 
-                fullWidth
-                multiline
-                rows={3}
-                value={businessDescription}
-                onChange={(e) => setBusinessDescription(e.target.value)}
-                InputLabelProps={{
-                    style: { color: 'rgba(255, 255, 255, 0.7)' }
-                }}
-                InputProps={{
-                    style: { color: 'white' },
-                    sx: {
-                        '&:before': { borderBottomColor: 'rgba(255, 255, 255, 0.3)' },
-                        '&:hover:not(.Mui-disabled):before': { borderBottomColor: 'rgba(255, 255, 255, 0.5)' },
-                        '&.Mui-focused:after': { borderBottomColor: 'primary.main' }
-                    }
-                }}
-            />
-            
-            <TextField 
-                id="hours" 
-                label="Часы работы" 
-                variant="standard" 
-                fullWidth
-                value={businessHours}
-                onChange={(e) => setBusinessHours(e.target.value)}
-                placeholder="Пн-Пт: 9:00-21:00, Сб-Вс: 10:00-22:00"
-                InputLabelProps={{
-                    style: { color: 'rgba(255, 255, 255, 0.7)' }
-                }}
-                InputProps={{
-                    style: { color: 'white' },
-                    sx: {
-                        '&:before': { borderBottomColor: 'rgba(255, 255, 255, 0.3)' },
-                        '&:hover:not(.Mui-disabled):before': { borderBottomColor: 'rgba(255, 255, 255, 0.5)' },
-                        '&.Mui-focused:after': { borderBottomColor: 'primary.main' }
-                    }
-                }}
-            />
-            
-            <TextField 
-                id="city" 
-                label="Город" 
-                variant="standard" 
-                fullWidth
-                value={businessCity}
-                onChange={(e) => setBusinessCity(e.target.value)}
-                InputLabelProps={{
-                    style: { color: 'rgba(255, 255, 255, 0.7)' }
-                }}
-                InputProps={{
-                    style: { color: 'white' },
-                    sx: {
-                        '&:before': { borderBottomColor: 'rgba(255, 255, 255, 0.3)' },
-                        '&:hover:not(.Mui-disabled):before': { borderBottomColor: 'rgba(255, 255, 255, 0.5)' },
-                        '&.Mui-focused:after': { borderBottomColor: 'primary.main' }
-                    }
-                }}
-            />
-            
-            <Button
-                variant="contained"
-                component="label"
-                sx={{
-                    backgroundColor: 'transparent',
-                    color: 'white',
-                    textTransform: 'none',
-                    borderRadius: '0.6vw',
-                    padding: '0.6vw 1.1vw',
-                    fontWeight: 500,
-                    fontSize: '1.1vw',
-                    boxShadow: 'none',
-                    mt: 2
-                }}
-            >
-                {businessPhoto ? 'Фото выбрано' : 'Добавить фото'}
-                <input
-                    type="file"
-                    hidden
-                    accept="image/*"
-                    onChange={handleFileChange}
-                />
-            </Button>
-            
-            {businessError && (
-                <Typography color="error" variant="body2" sx={{ mt: 1 }}>
-                    {businessError}
-                </Typography>
-            )}
-            
-            {businessSuccess && (
-                <Typography color="success.main" variant="body2" sx={{ mt: 1 }}>
-                    Бизнес успешно создан!
-                </Typography>
-            )}
-            
-            <Button 
-                variant="contained" 
-                onClick={handleCreateBusiness}
-                disabled={businessLoading || !user}
-                sx={{
-                    backgroundColor: '#646cff',
-                    color: 'white',
-                    textTransform: 'none',
-                    borderRadius: '0.6vw',
-                    padding: '0.6vw 1.1vw',
-                    fontWeight: 500,
-                    fontSize: '1.1vw',
-                    '&:hover': {
-                        backgroundColor: '#535bf2',
-                        boxShadow: 'none'
-                    },
-                    boxShadow: 'none',
-                    mt: 2
-                }}
-            >
-                {businessLoading ? (
-                    <CircularProgress size={24} color="inherit" />
-                ) : (
-                    'Создать бизнес'
-                )}
-            </Button>
-        </Box> */}
+        
         <Box sx={{marginTop: '-28vw'}}>
             <Box sx={{ mt: 4, width: '100%', maxWidth: '62.5vw', px: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'column' }}>
                 <Typography variant="h5" sx={{ color: 'white', mb: 3, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -742,8 +584,8 @@ function StartPage() {
                         gap: { xs: 2, sm: 3 },
                         justifyContent: 'center',
                         width: '100%',
-                        maxWidth: '72.9vw',  // Максимальная ширина контейнера
-                        mx: 'auto'           // Центрирование по горизонтали
+                        maxWidth: '72.9vw',
+                        mx: 'auto'
                     }}>
                         {businesses.map((business) => (
                             <BusinessCard key={business.id} business={business} />
@@ -788,7 +630,6 @@ function StartPage() {
             <img src={'old_logo.svg'} alt="old_logo" style={{width: '130vw', height: '130vw', marginTop: '-24vw', marginRight: '1vw'}} />
         </Box>
 
-        {/* Новый блок контактов на всю ширину */}
         <Box sx={{
             width: '100%',
             backgroundColor: '#2a2a2a',
@@ -799,15 +640,6 @@ function StartPage() {
             flexDirection: 'column',
             alignItems: 'center'
         }}>
-            {/* <Typography variant="h1" sx={{
-                color: 'rgba(255, 255, 255, 1)', 
-                fontWeight: 800, 
-                fontSize: '2vw', 
-                fontFamily: 'SF-Pro-Display-Medium !important',
-                mb: '2vw'
-            }}>
-                Свяжитесь с нами
-            </Typography> */}
             
             <Box sx={{
                 display: 'flex',
@@ -815,7 +647,6 @@ function StartPage() {
                 width: '95%',
                 px: '2vw'
             }}>
-                {/* Левая колонка - Контакты */}
                 <Box sx={{
                     display: 'flex',
                     flexDirection: 'column',
@@ -884,7 +715,6 @@ function StartPage() {
                     </Box>
                 </Box>
                 
-                {/* Правая колонка - Адрес */}
                 <Box sx={{
                     display: 'flex',
                     flexDirection: 'column',

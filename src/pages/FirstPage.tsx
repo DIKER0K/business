@@ -32,7 +32,6 @@ function FirstPage({ currentLocation, loadingLocation, getLocation }: FirstPageP
   const navigate = useNavigate();
   const auth = getAuth(app);
 
-  // Функция для загрузки бизнесов
   const fetchBusinesses = async () => {
     if (!currentLocation) return;
     
@@ -63,7 +62,6 @@ function FirstPage({ currentLocation, loadingLocation, getLocation }: FirstPageP
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
-        // Получаем данные пользователя из Firestore
         try {
           const db = getFirestore();
           const userDoc = await getDoc(doc(db, "users", currentUser.uid));
@@ -98,7 +96,6 @@ function FirstPage({ currentLocation, loadingLocation, getLocation }: FirstPageP
       bgcolor: '#1d1d1d',
       overflow: 'hidden'
     }}>
-      {/* Основной контент */}
       <Box sx={{ 
         display: 'flex', 
         flex: 1,
@@ -106,14 +103,12 @@ function FirstPage({ currentLocation, loadingLocation, getLocation }: FirstPageP
         gap: '1vw',
         overflow: 'hidden'
       }}>
-        {/* Центральная панель - заменена на компонент */}
         <RecommendedBusinesses 
           businesses={businesses}
           loadingBusinesses={loadingBusinesses}
           currentLocation={currentLocation}
         />
         
-        {/* Правая панель*/}
         <Box sx={{ 
           width: '20vw', 
           bgcolor: 'white', 

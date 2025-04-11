@@ -14,7 +14,6 @@ function BusinessPage() {
   const [userBusinesses, setUserBusinesses] = useState<any[]>([]);
   const [loadingBusinesses, setLoadingBusinesses] = useState(true);
 
-  // Загрузка бизнесов пользователя
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -49,7 +48,6 @@ function BusinessPage() {
       bgcolor: '#1d1d1d',
       overflow: 'hidden'
     }}>
-      {/* Основной контент */}
       <Box sx={{ 
         display: 'flex', 
         flex: 1,
@@ -57,7 +55,6 @@ function BusinessPage() {
         gap: '1vw',
         overflow: 'hidden'
       }}>
-        {/* Центральная панель */}
         <motion.div
           style={{
             flex: 1,
@@ -77,7 +74,6 @@ function BusinessPage() {
             flexDirection: 'column',
             marginLeft: '3vw',
           }}>
-            {/* Основной заголовок */}
             <Typography 
               component="div"
               sx={{
@@ -103,7 +99,6 @@ function BusinessPage() {
               </Typography>
             </Typography>
 
-            {/* Блок описания */}
             <Box component="div" sx={{ position: 'relative', zIndex: 1 }}>
               <Typography
                 component="div"
@@ -177,7 +172,6 @@ function BusinessPage() {
           </Box>
         </motion.div>
         
-        {/* Правая панель*/}
         <motion.div
           style={{
             width: '20vw',

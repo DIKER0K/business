@@ -78,7 +78,6 @@ function EmployerNavigationPanel({
 }: EmployerNavigationPanelProps) {
   const location = useLocation();
 
-  // Добавим состояния для полей формы
   const [businessName, setBusinessName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
@@ -89,11 +88,9 @@ function EmployerNavigationPanel({
   const [address, setAddress] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Обработчик отправки формы
   const handleSubmit = async () => {
     try {
       setLoading(true);
-      // Собираем данные с гарантированным значением location
       const businessData = {
         name: businessName,
         phone,
@@ -107,11 +104,9 @@ function EmployerNavigationPanel({
         updatedAt: new Date(),
       };
 
-      // Добавляем документ в коллекцию businesses
       const docRef = await addDoc(collection(db, 'businesses'), businessData);
       console.log('Business added with ID: ', docRef.id);
       
-      // Очищаем форму
       setBusinessName('');
       setPhone('');
       setEmail('');
@@ -157,7 +152,6 @@ function EmployerNavigationPanel({
         gap: '3vw',
         position: 'relative'
       }}>
-        {/* Блок навигации */}
         <Box 
           component={Link}
           to="/business"
@@ -373,7 +367,6 @@ function EmployerNavigationPanel({
           </Box>
         )}
 
-        {/* Блок геолокации */}
         <Box sx={{
           position: 'absolute',
           right: '-14vw',
@@ -428,7 +421,6 @@ function EmployerNavigationPanel({
         boxSizing: 'border-box',
         display: location.pathname === '/business' ? 'flex' : 'none',
       }}>
-        {/* Первая строка: аватарка, название бизнеса, телефон, почта, описание */}
         <Box sx={{
           display: 'grid',
           gridTemplateColumns: '5vw 1fr 1fr 1fr 1fr',
@@ -436,7 +428,6 @@ function EmployerNavigationPanel({
           alignItems: 'flex-start',
           width: '100%'
         }}>
-          {/* Аватарка */}
           <Box sx={{ 
             width: '5vw', 
             height: '5vw', 
@@ -461,7 +452,6 @@ function EmployerNavigationPanel({
             </label>
           </Box>
           
-          {/* Название бизнеса */}
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5vw', width: '100%' }}>
             <Typography variant="caption" sx={{ fontSize: '0.8vw', color: '#666' }}>
               Введите название бизнеса
@@ -496,7 +486,6 @@ function EmployerNavigationPanel({
             />
           </Box>
           
-          {/* Телефон */}
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5vw', width: '100%' }}>
             <Typography variant="caption" sx={{ fontSize: '0.8vw', color: '#666' }}>
               Введите номер телефона
@@ -531,7 +520,6 @@ function EmployerNavigationPanel({
             />
           </Box>
           
-          {/* Почта */}
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5vw', width: '100%' }}>
             <Typography variant="caption" sx={{ fontSize: '0.8vw', color: '#666' }}>
               Оставьте почту
@@ -566,7 +554,6 @@ function EmployerNavigationPanel({
             />
           </Box>
           
-          {/* Описание бизнеса */}
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5vw', width: '100%' }}>
             <Typography variant="caption" sx={{ fontSize: '0.8vw', color: '#666' }}>
               Опишите ваш бизнес
@@ -602,14 +589,12 @@ function EmployerNavigationPanel({
           </Box>
         </Box>
         
-        {/* Вторая строка: сайт, тип бизнеса, город, часы работы, адрес */}
         <Box sx={{
           display: 'grid',
           gridTemplateColumns: 'repeat(5, 1fr)',
           gap: '1.5vw',
           width: '100%'
         }}>
-          {/* Сайт */}
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5vw', width: '100%' }}>
             <Typography variant="caption" sx={{ fontSize: '0.8vw', color: '#666' }}>
               Укажите сайт (если есть)
@@ -644,7 +629,6 @@ function EmployerNavigationPanel({
             />
           </Box>
           
-          {/* Тип бизнеса */}
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5vw', width: '100%' }}>
             <Typography variant="caption" sx={{ fontSize: '0.8vw', color: '#666' }}>
               Тип бизнеса
@@ -682,7 +666,6 @@ function EmployerNavigationPanel({
             </TextField>
           </Box>
           
-          {/* Город */}
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5vw', width: '100%' }}>
             <Typography variant="caption" sx={{ fontSize: '0.8vw', color: '#666' }}>
               Укажите город
@@ -721,7 +704,6 @@ function EmployerNavigationPanel({
             </TextField>
           </Box>
           
-          {/* Часы работы */}
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5vw', width: '100%' }}>
             <Typography variant="caption" sx={{ fontSize: '0.8vw', color: '#666' }}>
               Часы работы
@@ -761,7 +743,6 @@ function EmployerNavigationPanel({
             </TextField>
           </Box>
           
-          {/* Адрес */}
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5vw', width: '100%' }}>
             <Typography variant="caption" sx={{ fontSize: '0.8vw', color: '#666' }}>
               Укажите адрес

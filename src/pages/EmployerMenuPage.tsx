@@ -7,7 +7,6 @@ import { Typography} from '@mui/material';
 import { getFirestore, collection, getDocs, query, where, limit } from "firebase/firestore";
 import RecommendedBusinesses from '../components/RecommendedBusinesses';
 
-// Добавьте интерфейс Business в начало файла
 interface Business {
   id: string;
   name: string;
@@ -31,7 +30,6 @@ function EmployerMenuPage({ currentLocation, loadingLocation, getLocation }: Emp
   const navigate = useNavigate();
   const auth = getAuth(app);
 
-  // Функция для загрузки бизнесов
   const fetchBusinesses = async () => {
     if (!currentLocation) return;
     
@@ -81,7 +79,6 @@ function EmployerMenuPage({ currentLocation, loadingLocation, getLocation }: Emp
       bgcolor: '#1d1d1d',
       overflow: 'hidden'
     }}>
-      {/* Основной контент */}
       <Box sx={{ 
         display: 'flex', 
         flex: 1,
@@ -111,7 +108,6 @@ function EmployerMenuPage({ currentLocation, loadingLocation, getLocation }: Emp
         </Box>
       </Box>
         
-        {/* Правая панель*/}
         <Box sx={{ 
           width: '20vw', 
           bgcolor: 'white', 

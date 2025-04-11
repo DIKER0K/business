@@ -10,7 +10,6 @@ interface Business {
   photoURL?: string;
   rating?: number;
   city?: string;
-  // другие поля бизнеса
 }
 
 interface RecommendedBusinessesProps {
@@ -25,7 +24,6 @@ const RecommendedBusinesses = ({
   currentLocation 
 }: RecommendedBusinessesProps) => {
   
-  // Вспомогательная функция для капитализации
   const capitalizeEachWord = (str: string) => {
     if (!str) return '';
     return str.toLowerCase()

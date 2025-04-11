@@ -58,7 +58,6 @@ function RestaurantNavigationPanel({
         gap: '3vw',
         position: 'relative'
       }}>
-        {/* Блок навигации */}
         <Box 
           component={Link}
           to={`/business/${businessId}/restaurant_menu`}
@@ -159,7 +158,6 @@ function RestaurantNavigationPanel({
           }}>Локации</Typography>
         </Box>
 
-        {/* Блок геолокации */}
         <Box sx={{
           position: 'absolute',
           right: '0vw',

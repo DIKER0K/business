@@ -7,7 +7,6 @@ import { Typography} from '@mui/material';
 import { getFirestore, collection, getDocs, query, where, limit, doc, getDoc } from "firebase/firestore";
 import RecommendedBusinesses from '../components/RecommendedBusinesses';
 
-// Добавьте интерфейс Business в начало файла
 interface Business {
   id: string;
   name: string;
@@ -33,7 +32,6 @@ function RestaurantMenuPage({ currentLocation, loadingLocation, getLocation }: R
   const auth = getAuth(app);
   const [currentBusiness, setCurrentBusiness] = useState<Business | null>(null);
 
-  // Функция для загрузки бизнесов
   const fetchBusinesses = async () => {
     if (!currentLocation) return;
     
@@ -103,7 +101,6 @@ function RestaurantMenuPage({ currentLocation, loadingLocation, getLocation }: R
       bgcolor: '#1d1d1d',
       overflow: 'hidden'
     }}>
-      {/* Основной контент */}
       <Box sx={{ 
         display: 'flex', 
         flex: 1,
@@ -141,7 +138,6 @@ function RestaurantMenuPage({ currentLocation, loadingLocation, getLocation }: R
           )}
         </Box>
         
-        {/* Правая панель*/}
         <Box sx={{ 
           width: '20vw', 
           bgcolor: 'white', 

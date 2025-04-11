@@ -37,7 +37,6 @@ function RootComponent() {
     return () => unsubscribe()
   }, [auth])
 
-  // Общая функция для определения местоположения
   const getLocation = () => {
     console.log("Функция getLocation вызвана");
     setLoadingLocation(true);
@@ -262,7 +261,6 @@ function RootComponent() {
               }
             />
 
-        {/* Резервный маршрут */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>

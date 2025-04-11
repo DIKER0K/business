@@ -12,7 +12,6 @@ import RecommendedBusinesses from '../components/RecommendedBusinesses';
 import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
 import FavoriteBorderRoundedIcon from '@mui/icons-material/FavoriteBorderRounded';
 
-// Добавьте интерфейс Business в начало файла
 interface Business {
   id: string;
   name: string;
@@ -39,7 +38,6 @@ function FeaturedPage({ currentLocation, loadingLocation, getLocation }: Feature
   const { businessId } = useParams();
   const auth = getAuth(app);
 
-  // Функция для загрузки бизнесов
   const fetchBusinesses = async () => {
     if (!currentLocation) return;
     
@@ -67,7 +65,6 @@ function FeaturedPage({ currentLocation, loadingLocation, getLocation }: Feature
     }
   };
 
-  // Добавляем функцию загрузки избранного
   const fetchFavorites = async (user: any) => {
     if (!user?.favorites?.length) {
       setFavoriteBusinesses([]);
@@ -99,7 +96,6 @@ function FeaturedPage({ currentLocation, loadingLocation, getLocation }: Feature
     }
   };
 
-  // Добавим функцию для обновления избранного
   const toggleFavorite = async (businessId: string) => {
     if (!user) return;
 
@@ -108,18 +104,15 @@ function FeaturedPage({ currentLocation, loadingLocation, getLocation }: Feature
       const userRef = doc(db, "users", user.uid);
       const currentFavorites = user.favorites || [];
       
-      // Проверяем, есть ли уже бизнес в избранном
       const isFavorite = currentFavorites.includes(businessId);
       const newFavorites = isFavorite 
         ? currentFavorites.filter(id => id !== businessId)
         : [...currentFavorites, businessId];
 
-      // Обновляем данные пользователя
       await updateDoc(userRef, {
         favorites: newFavorites
       });
 
-      // Обновляем локальное состояние
       setUser(prev => ({...prev, favorites: newFavorites}));
       fetchFavorites({...user, favorites: newFavorites});
 
@@ -128,11 +121,9 @@ function FeaturedPage({ currentLocation, loadingLocation, getLocation }: Feature
     }
   };
 
-  // Обновляем useEffect для пользователя
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        // Загружаем данные пользователя с избранным
         const fetchUserData = async () => {
           const db = getFirestore();
           const userDoc = await getDoc(doc(db, "users", user.uid));
@@ -162,7 +153,6 @@ function FeaturedPage({ currentLocation, loadingLocation, getLocation }: Feature
       bgcolor: '#1d1d1d',
       overflow: 'hidden'
     }}>
-      {/* Основной контент */}
       <Box sx={{ 
         display: 'flex', 
         flex: 1,
@@ -170,14 +160,12 @@ function FeaturedPage({ currentLocation, loadingLocation, getLocation }: Feature
         gap: '1vw',
         overflow: 'hidden'
       }}>
-        {/* Центральная панель - заменена на компонент */}
         <RecommendedBusinesses 
           businesses={businesses}
           loadingBusinesses={loadingBusinesses}
           currentLocation={currentLocation}
         />
         
-        {/* Правая панель*/}
         <Box sx={{ 
           width: '20vw',
           bgcolor: 'white', 

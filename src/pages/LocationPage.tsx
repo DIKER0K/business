@@ -8,7 +8,6 @@ import { getFirestore, collection, getDocs, query, where, limit, doc, getDoc } f
 import { CircularProgress, Avatar } from '@mui/material';
 import { Placemark, YMaps, Map } from '@iminside/react-yandex-maps';
 
-// Добавьте интерфейс Business в начало файла
 interface Business {
   id: string;
   name: string;
@@ -20,7 +19,6 @@ interface Business {
   coordinates?: Coordinates;
 }
 
-// В начале файла добавим интерфейс для координат
 interface Coordinates {
   lat: number;
   lng: number;
@@ -43,7 +41,6 @@ function LocationPage({ currentLocation, loadingLocation, getLocation }: Locatio
   const navigate = useNavigate();
   const auth = getAuth(app);
 
-  // Функция для загрузки бизнесов
   const fetchBusinesses = async () => {
     if (!currentLocation) return;
     
@@ -71,7 +68,6 @@ function LocationPage({ currentLocation, loadingLocation, getLocation }: Locatio
     }
   };
 
-  // Добавим функцию для загрузки избранного (аналогично FeaturedPage)
   const fetchFavorites = async (user: any) => {
     if (!user?.favorites?.length) {
       setFavoriteBusinesses([]);
@@ -103,7 +99,6 @@ function LocationPage({ currentLocation, loadingLocation, getLocation }: Locatio
     }
   };
 
-  // Обновим useEffect для пользователя
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -136,7 +131,6 @@ function LocationPage({ currentLocation, loadingLocation, getLocation }: Locatio
       bgcolor: '#1d1d1d',
       overflow: 'hidden'
     }}>
-      {/* Основной контент */}
       <Box sx={{ 
         display: 'flex', 
         flex: 1,
@@ -144,7 +138,6 @@ function LocationPage({ currentLocation, loadingLocation, getLocation }: Locatio
         gap: '1vw',
         overflow: 'hidden'
       }}>
-        {/* Центральная панель - заменена на компонент */}
         <Box sx={{ 
           flex: 1,
           bgcolor: 'white',
@@ -174,7 +167,6 @@ function LocationPage({ currentLocation, loadingLocation, getLocation }: Locatio
             </Map>
           </YMaps>
         </Box>
-        {/* Правая панель*/}
         <Box sx={{ 
           width: '20vw', 
           bgcolor: 'white', 
@@ -215,7 +207,6 @@ function LocationPage({ currentLocation, loadingLocation, getLocation }: Locatio
                     '&:hover': { bgcolor: '#f5f5f5' }
                   }}
                   onClick={() => {
-                    // Добавим установку координат для карты
                     if (business.coordinates) {
                       setSelectedBusinessCoords(business.coordinates);
                       if (mapInstance) {

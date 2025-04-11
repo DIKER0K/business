@@ -78,7 +78,6 @@ function NavigationPanel({
 }: NavigationPanelProps) {
   const location = useLocation();
 
-  // Добавим состояния для полей формы
   const [businessName, setBusinessName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
@@ -102,7 +101,7 @@ function NavigationPanel({
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'api-key': '85223f82-aec0-453b-8dff-35f0439b778e' // Замените на действительный ключ
+          'api-key': '85223f82-aec0-453b-8dff-35f0439b778e' 
         },
         body: JSON.stringify({
           text: `Professional business logo for ${businessName || 'a company'}, minimalist style`,
@@ -121,7 +120,6 @@ function NavigationPanel({
     }
   };
 
-  // Обработчик отправки формы
   const handleSubmit = async () => {
     if (!user) {
       alert('Требуется авторизация');
@@ -135,7 +133,6 @@ function NavigationPanel({
 
     try {
       setLoading(true);
-      // Добавляем uid пользователя в данные бизнеса
       const businessData = {
         name: businessName,
         phone,
@@ -147,14 +144,12 @@ function NavigationPanel({
         address,
         createdAt: new Date(),
         updatedAt: new Date(),
-        ownerId: user.uid, // Явно используем uid авторизованного пользователя
+        ownerId: user.uid,
       };
 
-      // Добавляем документ в коллекцию businesses
       const docRef = await addDoc(collection(db, 'businesses'), businessData);
       console.log('Business added with ID: ', docRef.id);
       
-      // Очищаем форму
       setBusinessName('');
       setPhone('');
       setEmail('');
@@ -172,19 +167,14 @@ function NavigationPanel({
     }
   };
 
-  // Функция сохранения изменений
   const handleSaveChanges = async () => {
     try {
       const updates = [];
       
-      // Обновление номера телефона
       if (phoneNumber !== user.phoneNumber) {
-        // Требуется реализация верификации номера
-        // await updatePhoneNumber(user, phoneNumber);
         updates.push('номер телефона');
       }
 
-      // Обновление пароля
       if (newPassword) {
         await updatePassword(user, newPassword);
         setNewPassword('');
@@ -231,7 +221,6 @@ function NavigationPanel({
         gap: '3vw',
         position: 'relative'
       }}>
-        {/* Блок навигации */}
         <Box 
           component={Link}
           to="/business"
@@ -406,7 +395,6 @@ function NavigationPanel({
           }}>ИП</Typography>
         </Box>
 
-        {/* Изменяем условие отображения только для /business */}
         {location.pathname === '/business' && (
           <Box sx={{ 
             display: 'flex',
@@ -447,7 +435,6 @@ function NavigationPanel({
           </Box>
         )}
 
-        {/* Блок геолокации */}
         <Box sx={{
           position: 'absolute',
           right: '-10vw',
@@ -502,7 +489,6 @@ function NavigationPanel({
         boxSizing: 'border-box',
         display: location.pathname === '/business' ? 'flex' : 'none',
       }}>
-        {/* Первая строка: аватарка, название бизнеса, телефон, почта, описание */}
         <Box sx={{
           display: 'grid',
           gridTemplateColumns: '5vw 1fr 1fr 1fr 1fr',
@@ -510,7 +496,6 @@ function NavigationPanel({
           alignItems: 'flex-start',
           width: '100%'
         }}>
-          {/* Аватарка */}
           <Box sx={{ 
             width: '5vw', 
             height: '5vw', 
@@ -550,26 +535,7 @@ function NavigationPanel({
               </>
             )}
           </Box>
-          {/* <Button 
-              variant="contained" 
-              color="primary"
-              onClick={generateAIAvatar}
-              disabled={generatingAvatar}
-              size="small"
-              sx={{
-                position: 'absolute',
-                width: '10vw',
-                height: '2.8vw',
-                fontSize: '0.9vw',
-                borderRadius: '2vw',
-                bgcolor: '#1d1d1d',
-                color: 'white',
-                
-              }}
-            >
-              {generatingAvatar ? 'Генерация...' : 'Генерация ИИ'}
-            </Button> */}
-          {/* Название бизнеса */}
+
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5vw', width: '100%' }}>
             <Typography variant="caption" sx={{ fontSize: '0.8vw', color: '#666' }}>
               Введите название бизнеса
@@ -604,7 +570,6 @@ function NavigationPanel({
             />
           </Box>
           
-          {/* Телефон */}
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5vw', width: '100%' }}>
             <Typography variant="caption" sx={{ fontSize: '0.8vw', color: '#666' }}>
               Введите номер телефона
@@ -639,7 +604,6 @@ function NavigationPanel({
             />
           </Box>
           
-          {/* Почта */}
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5vw', width: '100%' }}>
             <Typography variant="caption" sx={{ fontSize: '0.8vw', color: '#666' }}>
               Оставьте почту
@@ -674,7 +638,6 @@ function NavigationPanel({
             />
           </Box>
           
-          {/* Описание бизнеса */}
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5vw', width: '100%' }}>
             <Typography variant="caption" sx={{ fontSize: '0.8vw', color: '#666' }}>
               Опишите ваш бизнес
@@ -710,14 +673,12 @@ function NavigationPanel({
           </Box>
         </Box>
         
-        {/* Вторая строка: сайт, тип бизнеса, город, часы работы, адрес */}
         <Box sx={{
           display: 'grid',
           gridTemplateColumns: 'repeat(5, 1fr)',
           gap: '1.5vw',
           width: '100%'
         }}>
-          {/* Сайт */}
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5vw', width: '100%' }}>
             <Typography variant="caption" sx={{ fontSize: '0.8vw', color: '#666' }}>
               Укажите сайт (если есть)
@@ -752,7 +713,6 @@ function NavigationPanel({
             />
           </Box>
           
-          {/* Тип бизнеса */}
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5vw', width: '100%' }}>
             <Typography variant="caption" sx={{ fontSize: '0.8vw', color: '#666' }}>
               Тип бизнеса
@@ -790,7 +750,6 @@ function NavigationPanel({
             </TextField>
           </Box>
           
-          {/* Город */}
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5vw', width: '100%' }}>
             <Typography variant="caption" sx={{ fontSize: '0.8vw', color: '#666' }}>
               Укажите город
@@ -829,7 +788,6 @@ function NavigationPanel({
             </TextField>
           </Box>
           
-          {/* Часы работы */}
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5vw', width: '100%' }}>
             <Typography variant="caption" sx={{ fontSize: '0.8vw', color: '#666' }}>
               Часы работы
@@ -869,7 +827,6 @@ function NavigationPanel({
             </TextField>
           </Box>
           
-          {/* Адрес */}
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5vw', width: '100%' }}>
             <Typography variant="caption" sx={{ fontSize: '0.8vw', color: '#666' }}>
               Укажите адрес
@@ -919,7 +876,6 @@ function NavigationPanel({
         marginTop: '2vw',
         display: location.pathname === '/settings' ? 'flex' : 'none',
       }}>
-        {/* Строка с настройками */}
         <Box sx={{
           display: 'grid',
           gridTemplateColumns: '5vw 1fr 1fr 1fr 1fr',
@@ -928,7 +884,6 @@ function NavigationPanel({
           width: '100%',
           position: 'relative'
         }}>
-          {/* Аватарка */}
           <Box sx={{ 
             width: '5vw', 
             height: '5vw', 
@@ -953,7 +908,6 @@ function NavigationPanel({
             </label>
           </Box>
 
-          {/* Смена телефона */}
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5vw' }}>
             <Typography variant="caption" sx={{ fontSize: '0.8vw', color: '#666' }}>
               Номер телефона
@@ -985,7 +939,6 @@ function NavigationPanel({
             />
           </Box>
 
-          {/* Смена пароля */}
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5vw' }}>
             <Typography variant="caption" sx={{ fontSize: '0.8vw', color: '#1d1d1d' }}>
               Новый пароль
@@ -1019,7 +972,6 @@ function NavigationPanel({
             />
           </Box>
 
-          {/* Уведомления */}
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5vw' }}>
             <Typography variant="caption" sx={{ fontSize: '0.8vw', color: '#1d1d1d' }}>
               Уведомления
@@ -1045,7 +997,6 @@ function NavigationPanel({
             </Button>
           </Box>
 
-          {/* Выход */}
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5vw' }}>
             <Typography variant="caption" sx={{ fontSize: '0.8vw', color: '#1d1d1d' }}>
               Аккаунт
@@ -1069,7 +1020,6 @@ function NavigationPanel({
             </Button>
           </Box>
 
-          {/* Кнопка сохранения */}
           <Button
             variant="contained"
             onClick={handleSaveChanges}

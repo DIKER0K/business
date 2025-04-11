@@ -99,7 +99,6 @@ function BarberNavigationPanel({
         gap: '3vw',
         position: 'relative'
       }}>
-        {/* Блок навигации */}
         <Box 
           component={Link}
           to={`/business/${businessId}/barber_services`}

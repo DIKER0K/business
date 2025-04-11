@@ -34,7 +34,6 @@ function SettingBusinessPage({ currentLocation, loadingLocation, getLocation }: 
   const auth = getAuth(app);
   const location = useLocation();
 
-  // Функция для загрузки бизнесов
   const fetchBusinesses = async () => {
     if (!currentLocation) return;
     
@@ -65,7 +64,6 @@ function SettingBusinessPage({ currentLocation, loadingLocation, getLocation }: 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
-        // Получаем данные пользователя из Firestore
         try {
           const db = getFirestore();
           const userDoc = await getDoc(doc(db, "users", currentUser.uid));
@@ -100,7 +98,6 @@ function SettingBusinessPage({ currentLocation, loadingLocation, getLocation }: 
       bgcolor: '#1d1d1d',
       overflow: 'hidden'
     }}>
-      {/* Основной контент */}
       <Box sx={{ 
         display: 'flex', 
         flex: 1,
@@ -108,7 +105,6 @@ function SettingBusinessPage({ currentLocation, loadingLocation, getLocation }: 
         gap: '1vw',
         overflow: 'hidden'
       }}>
-        {/* Центральная панель - заменена на компонент */}
         <Box sx={{ 
       flex: 1,
       bgcolor: 'white',
@@ -125,17 +121,22 @@ function SettingBusinessPage({ currentLocation, loadingLocation, getLocation }: 
     }}>
     </Box>
         
-        {/* Правая панель*/}
-        <Box sx={{ 
+        <motion.div style={{ 
           width: '20vw', 
-          bgcolor: 'white', 
+          backgroundColor: 'white', 
           borderRadius: '1vw',
-          p: '1.5vw',
+          padding: '1.5vw',
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
           height: '24.5vw',
-        }}>
+        }}
+        animate={{ 
+          height: location.pathname === '/settings' ? '24.5vw' : '38.5vw'
+        }}
+        transition={{ duration: 0.5, ease: "easeInOut" }}
+        layout
+        >
           <Box sx={{
             display: 'flex',
             justifyContent: 'center',
@@ -205,7 +206,7 @@ function SettingBusinessPage({ currentLocation, loadingLocation, getLocation }: 
               <Typography variant="h6" >Ничего не посещали</Typography>
             )}
           </Box>
-        </Box>
+        </motion.div>
       </Box>
     </Box>
   )
